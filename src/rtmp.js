@@ -12,13 +12,13 @@ class Rtmp {
             ping_timeout: 60
         },
         http: {
-            port: 8080,
+            port: 8000,
             allow_origin: "*",
             mediaroot: './media/streamvideo',
         },
         auth: {
-            play: true,
-            publish: true,
+            play: false,
+            publish: false,
             api: true,
             api_user: 'admin',
             api_pass: 'nms2018',
@@ -34,7 +34,7 @@ class Rtmp {
                     hlsKeep: true, // true to prevent file delete after end the stream
                     dash: true,
                     dashFlags: '[f=dash:window_size=3:extra_window_size=5]',*/
-/*
+/* *
                     app: 'live',
                     vc: "copy",
                     vcParam: [],
@@ -46,7 +46,7 @@ class Rtmp {
                     hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
                     dash: true,
                     dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
-                    *
+                    */
                     app: 'live',
                     ac: 'aac',
                     vc: 'libx264',
@@ -62,12 +62,12 @@ class Rtmp {
                     dash: true,
                     dashFlags: '[f=dash:window_size=3:extra_window_size=5]'*/
 
-                    app: 'live',
+                    /*app: 'live',
                     hls: true,
                     hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
                     hlsKeep: true, // to prevent file delete after end the stream
                     dash: true,
-                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
+                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'*/
                 }
             ]
         }
@@ -125,8 +125,8 @@ class Rtmp {
 
         this.server.on('prePlay', (id, StreamPath, args) => {
             console.log('\n[7 NodeEvent on prePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-            let session = this.server.getSession(id);
-            session.reject();
+            /*let session = this.server.getSession(id);
+            session.reject();*/
         });
 
         this.server.on('postPlay', (id, StreamPath, args) => {

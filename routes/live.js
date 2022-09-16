@@ -1,32 +1,49 @@
 var express = require('express');
+
 var router = express.Router();
 
-/* GET home page. */
-router.get('/:streamId', function(req, res, next) {
-  res.send(`
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
-<!-- Or if you want the latest version from the main branch -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@canary"></script> -->
-<video id="video"></video>
-<script>
-  var video = document.getElementById('video');
-  var videoSrc = 'http://localhost:8000/live/${req.params.streamId}/index.m3u8';
-  if (Hls.isSupported()) {
-    var hls = new Hls();
-    hls.loadSource(videoSrc);
-    hls.attachMedia(video);
-  }
-  else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = videoSrc;
-  }
-</script>
-  `);
+/* ONLY FOR DEVELOPMENT */
+router.get('/:streamId', function (req, res, next) {
+	res.send(`
+	<video id="videoElement"></video>
+	<script>
+		if (mpegts.getFeatureList().mseLivePlayback) {
+			var videoElement = document.getElementById('videoElement');
+			var player = mpegts.createPlayer({
+				type: 'flv',
+				isLive: true,
+				url: 'http://localhost:8000/live/${req.params.streamId}.flv'
+			});
+			player.attachMediaElement(videoElement);
+			player.load();
+			player.play();
+		}
+	</script>
+	`);
 });
 
-router.get('/', function (req, res, next) {
-  res.send(`
-a
-  `);
-});
+/*
+router.get('/:streamName', function (req, res, next) {
 
+	//TODO: search over db for stream id using streamer name
+
+	res.send(`
+	<video id="videoElement"></video>
+	<script src="http://localhost:9000/js/mpegts.js"></script>
+	<script>
+		if (mpegts.getFeatureList().mseLivePlayback) {
+			var videoElement = document.getElementById('videoElement');
+			var player = mpegts.createPlayer({
+				type: 'flv',
+				isLive: true,
+				url: 'http://localhost:8000/live/${req.params.streamId}.flv'
+			});
+			player.attachMediaElement(videoElement);
+			player.load();
+			player.play();
+		}
+	</script>
+	`);
+});
+*/
 module.exports = router;
