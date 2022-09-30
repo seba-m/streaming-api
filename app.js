@@ -4,8 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
+const mongoose = require('mongoose');
 
-var liveRouter = require('./routes/live');
+var apiV1Router = require('./routes/apiV1/api');
 var { Rtmp } = require("./src/rtmp");
 var app = express();
 
@@ -20,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use("/live", liveRouter);
+app.use("/apiV1", apiV1Router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -39,5 +40,8 @@ app.use(function(err, req, res, next) {
 });
 
 var rtmp = new Rtmp();
+
+const mongoDB = "mongodb://127.0.0.1/my_database";
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 module.exports = app;
