@@ -139,12 +139,4 @@ class Rtmp {
     }
 }
 
-function generateStreamKey() {
-    const { scryptSync, randomBytes } = require("crypto");
-    const salt = randomBytes(64).toString("hex")
-    const getHash = (password) => scryptSync(password, salt, 64).toString("hex");
-
-    return getHash(new Date().getTime().toString());
-}
-
 exports.Rtmp = Rtmp;
