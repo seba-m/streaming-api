@@ -19,10 +19,10 @@ var userSchema = new Schema({
         type: String,
         required: true
     },
-    age: {
-        type: Number,
-        min: 18,
-        max: 65,
+    birthDate: {
+        type: Date,
+        min: '1900-01-01',
+        max: Date.now(),
         required: true
     },
     created_at: {
