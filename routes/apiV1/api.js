@@ -32,10 +32,19 @@ router.get('/search/stream', function (req, res, next) {
 	Tiempo: 'test', //stream data
 	Idiomas: 'test', //stream data
 	Views: 0, //stream data
-
 	
 	*/
-	res.send("");
+	res.send({
+		URL: `http://localhost:8000/live/${req.query.query}.flv`,
+		Name: 'test',
+		About: 'this is a test about description',
+		Title: 'test stream xd',
+		Tags: ['test1', 'vtuber', 'spain'],
+		Time: "2022-10-04T19:55:53.790Z",
+		Category: 'csgo',
+		Followers: 0,
+		Views: 0,
+	});
 });
 
 router.get('/discover/stream', function (req, res, next) {
