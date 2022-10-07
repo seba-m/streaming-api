@@ -36,74 +36,79 @@ router.get('/search/stream', function (req, res, next) {
 	*/
 
 	res.send(JSON.stringify(
-		[
-			{
-				Username: 'test',
-				Category: 'csgo',
-				Title: 'test stream xd',
-				Views: 0,
-				About: 'this is a test about description',
-				Tags: ['test1', 'vtuber', 'spain'],
-				Time: "2022-10-04T19:55:53.790Z",
-			},
-			{
-				Username: 'test2',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-			{
-				Username: 'test3',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-			{
-				Username: 'test4',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-			{
-				Username: 'test5',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-		]
+		{
+			Streams:
+				[
+					{
+						Username: 'test',
+						Category: 'csgo',
+						Title: 'test stream xd',
+						Views: 0,
+						About: 'this is a test about description',
+						Tags: ['test1', 'vtuber', 'spain']
+					},
+					{
+						Username: 'test2',
+						Followers: 0,
+						About: 'this is a test about description',
+					},
+					{
+						Username: 'test3',
+						Followers: 0,
+						About: 'this is a test about description',
+					},
+					{
+						Username: 'test4',
+						Followers: 0,
+						About: 'this is a test about description',
+					},
+					{
+						Username: 'test5',
+						Followers: 0,
+						About: 'this is a test about description',
+					},
+				]
+		}
 	));
 });
 
 router.get('/discover/stream', function (req, res, next) {
 	//let randomStreamers = db.search(req.query.page);
 	res.send(JSON.stringify(
-		[
-			{
-				Username: 'test',
-				Category: 'csgo',
-				Title: 'test stream xd',
-				Views: 0,
-				About: 'this is a test about description',
-				Tags: ['test1', 'vtuber', 'spain'],
-				Time: "2022-10-04T19:55:53.790Z",
-			},
-			{
-				Username: 'test2',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-			{
-				Username: 'test3',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-			{
-				Username: 'test4',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-			{
-				Username: 'test5',
-				Followers: 0,
-				About: 'this is a test about description',
-			},
-		]
+		{
+			Streams: 
+			[
+				{
+					Username: 'test',
+					Category: 'csgo',
+					Title: 'test stream xd',
+					Views: 0,
+					About: 'this is a test about description',
+					Tags: ['test1', 'vtuber', 'spain'],
+					Time: "2022-10-04T19:55:53.790Z",
+				},
+				{
+					Username: 'test2',
+					Followers: 0,
+					About: 'this is a test about description',
+				},
+				{
+					Username: 'test3',
+					Followers: 0,
+					About: 'this is a test about description',
+				},
+				{
+					Username: 'test4',
+					Followers: 0,
+					About: 'this is a test about description',
+				},
+				{
+					Username: 'test5',
+					Followers: 0,
+					About: 'this is a test about description',
+				},
+			]
+		}
 	));
 });
 
