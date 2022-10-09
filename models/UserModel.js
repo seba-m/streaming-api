@@ -58,10 +58,6 @@ var userSchema = new Schema({
             type: String,
             required: true
         },
-        about: {
-            type: String,
-            required: true
-        },
         isLive: {
             type: Boolean,
             default: false
@@ -76,12 +72,14 @@ var userSchema = new Schema({
             type: Date,
             default: Date.now
         },
+        about: {
+            type: String,
+            maxlength: 200,
+            required: true
+        },
         title: {
             type: String,
-            default: ''
-        },
-        description: {
-            type: String,
+            maxlength: 75,
             default: ''
         },
         category: [{

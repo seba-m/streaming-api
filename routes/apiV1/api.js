@@ -44,8 +44,7 @@ router.get('/search/stream', function (req, res, next) {
 						Category: 'csgo',
 						Title: 'test stream xd',
 						Views: 0,
-						About: 'this is a test about description',
-						Tags: ['test1', 'vtuber', 'spain']
+						Tags: ['test1', 'vtuber', 'spain'],
 					},
 					{
 						Username: 'test2',
@@ -72,6 +71,29 @@ router.get('/search/stream', function (req, res, next) {
 	));
 });
 
+router.get('/search/tag', function (req, res, next) {
+	//TODO: search streamer data using streamer name on database
+
+	//let streamerId = db.search(req.query.search, req.query.page);
+
+	//if there no streamers with that tag, return empty array
+
+	res.send(JSON.stringify(
+		{
+			Streams:
+				[
+					{
+						Username: 'test',
+						Category: 'csgo',
+						Title: 'test stream xd',
+						Views: 0,
+						Tags: ['test1', 'vtuber', 'spain'],
+					}
+				]
+		}
+	));
+});
+
 router.get('/discover/stream', function (req, res, next) {
 	//let randomStreamers = db.search(req.query.page);
 	res.send(JSON.stringify(
@@ -81,11 +103,9 @@ router.get('/discover/stream', function (req, res, next) {
 				{
 					Username: 'test',
 					Category: 'csgo',
-					Title: 'test stream xd',
+					Title: '[DROPS] 🔴 ASHE/ANA PLAYER 🔴 TRYING 5 HOUR ENERGY | !drops !socials !voice',
 					Views: 0,
-					About: 'this is a test about description',
 					Tags: ['test1', 'vtuber', 'spain'],
-					Time: "2022-10-04T19:55:53.790Z",
 				},
 				{
 					Username: 'test2',
