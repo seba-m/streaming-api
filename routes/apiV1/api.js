@@ -14,6 +14,7 @@ router.get('/stream/:streamName', function (req, res, next) {
 		Category: 'csgo',
 		Followers: 0,
 		Views: 0,
+		IsLive: true
 	}));
 });
 
@@ -103,7 +104,7 @@ router.get('/discover/stream', function (req, res, next) {
 				{
 					Username: 'test',
 					Category: 'csgo',
-					Title: '[DROPS] 🔴 ASHE/ANA PLAYER 🔴 TRYING 5 HOUR ENERGY | !drops !socials !voice',
+					Title: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum',
 					Views: 0,
 					Tags: ['test1', 'vtuber', 'spain'],
 				},
