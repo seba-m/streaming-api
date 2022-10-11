@@ -16,7 +16,7 @@ router.get('/stream/:streamName', function (req, res, next) {
 		Category: 'csgo',
 		Followers: 0,
 		Views: 0,
-		IsLive: true
+		IsLive: false
 	}));
 });
 
