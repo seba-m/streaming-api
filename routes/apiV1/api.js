@@ -4,9 +4,11 @@ var router = express.Router();
 
 router.get('/stream/:streamName', function (req, res, next) {
 	//TODO: search streamer data using streamer name on database
+	console.log(req.params.streamName);
+
 	res.send(JSON.stringify({
-		URL: `http://localhost:8000/live/${req.query.query}.flv`,
-		Name: 'test',
+		URL: `http://localhost:8000/live/${req.params.streamName}.flv`,
+		Username: 'test',
 		About: 'this is a test about description',
 		Title: 'test stream xd',
 		Tags: ['test1', 'vtuber', 'spain'],
