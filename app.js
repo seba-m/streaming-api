@@ -6,7 +6,6 @@ var logger = require('morgan');
 var cors = require("cors");
 const mongoose = require('mongoose');
 
-var apiV1Router = require('./routes/apiV1/api');
 var { Rtmp } = require("./src/rtmp");
 var app = express();
 
@@ -17,11 +16,17 @@ app.set('view engine', 'jade');
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use("/apiV1", apiV1Router);
+
+require('./routes/user.routes')(app);
+require('./routes/auth.routes')(app);
+require('./routes/stream.routes')(app);
+require('./routes/category.routes')(app);
+require('./routes/search.routes')(app);
+require('./routes/discover.routes')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
