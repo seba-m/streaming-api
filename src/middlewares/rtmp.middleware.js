@@ -24,29 +24,9 @@ class Rtmp {
             api_pass: 'nms2018',
         },
         trans: {
-            //ffmpeg: './ffmpeg/ffmpeg.exe',
             ffmpeg: './ffmpeg.exe',
             tasks: [
                 {
-                    /*app: 'live',
-                    hls: true,
-                    hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
-                    hlsKeep: true, // true to prevent file delete after end the stream
-                    dash: true,
-                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]',*/
-/* *
-                    app: 'live',
-                    vc: "copy",
-                    vcParam: [],
-                    ac: "aac",
-                    acParam: ['-ab', '64k', '-ac', '1', '-ar', '44100'],
-                    rtmp: true,
-                    rtmpApp: 'live2',
-                    hls: true,
-                    hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
-                    dash: true,
-                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
-                    */
                     app: 'live',
                     ac: 'aac',
                     vc: 'libx264',
@@ -54,20 +34,6 @@ class Rtmp {
                     hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
                     dash: true,
                     dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
-/*
-                    app: 'live',
-                    ac: 'aac',
-                    hls: true,
-                    hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
-                    dash: true,
-                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'*/
-
-                    /*app: 'live',
-                    hls: true,
-                    hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
-                    hlsKeep: true, // to prevent file delete after end the stream
-                    dash: true,
-                    dashFlags: '[f=dash:window_size=3:extra_window_size=5]'*/
                 }
             ]
         }

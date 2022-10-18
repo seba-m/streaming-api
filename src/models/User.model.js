@@ -56,7 +56,10 @@ var userSchema = new Schema({
     streamData: {
         name:{
             type: String,
-            required: true
+            required: true,
+            default: function () { 
+                return this.userName; 
+            },
         },
         isLive: {
             type: Boolean,
@@ -75,7 +78,7 @@ var userSchema = new Schema({
         about: {
             type: String,
             maxlength: 200,
-            required: true
+            required: false
         },
         title: {
             type: String,
