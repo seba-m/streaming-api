@@ -1,7 +1,7 @@
 
 
 module.exports = function (app) {
-    app.get('/apiV1/search/stream', function (req, res, next) {
+    app.get('/api/search/stream', function (req, res, next) {
         //let randomStreamers = db.search(req.query.page);
         res.send(JSON.stringify(
             {
@@ -39,7 +39,7 @@ module.exports = function (app) {
         ));
     });
 
-    app.get('/apiV1/search/tag', function (req, res, next) {
+    app.get('/api/search/tag', function (req, res, next) {
         //let randomStreamers = db.search(req.query.page);
         res.send(JSON.stringify(
             {
@@ -57,7 +57,7 @@ module.exports = function (app) {
         ));
     });
 
-    app.get('/apiV1/search/', function (req, res, next) {
+    app.get('/api/search/', function (req, res, next) {
         //let randomStreamers = db.search(req.query.page);
         res.send(JSON.stringify(
             {

@@ -1,7 +1,7 @@
 
 
 module.exports = function (app) {
-    app.get('/apiV1/discover/stream', function (req, res, next) {
+    app.get('/api/discover/stream', function (req, res, next) {
         //let randomStreamers = db.search(req.query.page);
         res.send(JSON.stringify(
             {
@@ -39,7 +39,7 @@ module.exports = function (app) {
         ));
     });
 
-    app.get('/apiV1/discover/tag', function (req, res, next) {
+    app.get('/api/discover/tag', function (req, res, next) {
         //let randomStreamers = db.search(req.query.page);
         res.send(JSON.stringify(
             {

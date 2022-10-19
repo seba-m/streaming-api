@@ -58,7 +58,6 @@ exports.signup = (req, res) => {
 	user.save((err, user) => {
 		if (err) {
 			res.status(500).send({ message: err });
-			console.log(err.message)
 			return;
 		}
 
@@ -98,7 +97,7 @@ exports.signin = (req, res) => {
 
 			res.status(200).send({
 				id: user._id,
-				username: user.username,
+				userName: user.userName,
 				email: user.email,
 				accessToken: token
 			});

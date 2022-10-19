@@ -1,9 +1,7 @@
 
 module.exports = function (app) {
-    app.get('/apiV1/stream/view/:streamName', function (req, res, next) {
+    app.get('/api/stream/view/:streamName', function (req, res, next) {
         //TODO: search streamer data using streamer name on database
-        console.log(req.params.streamName);
-
         res.send(JSON.stringify({
             URL: `http://localhost:8000/live/${req.params.streamName}.flv`,
             Username: 'test',
