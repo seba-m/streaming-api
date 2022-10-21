@@ -53,6 +53,11 @@ var userSchema = new Schema({
         type: String,
         default: ""
     },
+    about: {
+        type: String,
+        maxlength: 200,
+        required: false
+    },
     streamData: {
         name:{
             type: String,
@@ -74,11 +79,6 @@ var userSchema = new Schema({
         streamStartTime: {
             type: Date,
             default: Date.now
-        },
-        about: {
-            type: String,
-            maxlength: 200,
-            required: false
         },
         title: {
             type: String,
