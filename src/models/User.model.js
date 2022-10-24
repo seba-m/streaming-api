@@ -49,7 +49,7 @@ var userSchema = new Schema({
         type: String,
         default: ""
     },
-    profilePicture: {
+    avatar: {
         type: String,
         default: ""
     },
