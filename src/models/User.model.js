@@ -56,6 +56,9 @@ var userSchema = new Schema({
     about: {
         type: String,
         maxlength: 200,
+        default: function () {
+            return `Hello world!, im ${this.userName}.`;
+        },
         required: false
     },
     streamData: {
@@ -83,9 +86,15 @@ var userSchema = new Schema({
         title: {
             type: String,
             maxlength: 75,
-            default: ''
+            default: function () {
+                return `It Was Me, ${this.userName}!`;
+            }
         },
-        category: [{
+        category: {
+            type: String,
+            default: ""
+        },
+        tags: [{
             type: String,
             enum: ['gaming', 'music', 'coding', 'sports', 'other'],
             default: 'other'

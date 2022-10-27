@@ -1,4 +1,4 @@
-const controller = require('../controller/user.controller');
+const {profile, stream, updateProfile, updateStream, deleteAccount} = require('../controller/user.controller');
 const { verifyToken } = require('../middlewares/jwt.middleware');
 
 
@@ -11,13 +11,13 @@ module.exports = function (app) {
         next();
     });
 
-    app.get('/api/user/profile', [verifyToken], controller.profile);
+    app.get('/api/user/profile', [verifyToken], profile);
 
-    app.get('/api/user/stream', [verifyToken], controller.stream);
+    app.get('/api/user/stream', [verifyToken], stream);
 
-    app.put('/api/user/profile/update', [verifyToken], controller.updateProfile);
+    app.put('/api/user/profile/update', [verifyToken], updateProfile);
 
-    app.put('/api/user/stream/update', [verifyToken], controller.updateStream);
+    app.put('/api/user/stream/update', [verifyToken], updateStream);
 
-    app.delete('/api/user/profile/delete', [verifyToken], controller.deleteAccount);
+    app.delete('/api/user/profile/delete', [verifyToken], deleteAccount);
 };
