@@ -148,8 +148,11 @@ exports.viewStreamer = function (req, res, next) {
 
 exports.topStreamers = function (req, res, next) {
 
-    //get first 10 streamers from database
-    User.find({}).sort({ followers: -1 }).limit(10).exec(function (err, users) {
+    //get random 10 streamers from database using sample and size
+
+    User.aggregate([
+        { $sample: { size: 10 } }
+    ], function (err, users) {
         if (err) {
             return res.status(404).send({ message: err });
         }
