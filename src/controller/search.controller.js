@@ -98,16 +98,20 @@ exports.searchCategory = function (req, res, next) {
                         name: 'minecraft',
                         spectators: 2_000_000,
                         tags: ['adventures games', 'mmo', 'survivor'],
+                        image: 'https://static.wikia.nocookie.net/c-s/images/8/88/2127186-box_minecraft_large.png/revision/latest?cb=20121218031643',
+
                     },
                     {
                         name: 'minecraft dungeons',
                         spectators: 2_000_000,
                         tags: ['action', 'adventures games', 'rpg'],
+                        image: 'https://static.wikia.nocookie.net/c-s/images/8/88/2127186-box_minecraft_large.png/revision/latest?cb=20121218031643',
                     },
                     {
                         name: 'Minecraft: Story Mode',
                         spectators: 2_000_000,
                         tags: ['adventures games', 'action'],
+                        image: 'https://static.wikia.nocookie.net/c-s/images/8/88/2127186-box_minecraft_large.png/revision/latest?cb=20121218031643',
                     },
                 ]
         }
