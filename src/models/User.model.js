@@ -37,6 +37,10 @@ var userSchema = new Schema({
         type: String,
         required: true
     },
+    following: {
+        type: [string],
+        default: []
+    },
     socialAccounts: {
         type: Array,
         default: []
