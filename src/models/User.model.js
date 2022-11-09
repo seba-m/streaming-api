@@ -94,14 +94,21 @@ var userSchema = new Schema({
                 return `It Was Me, ${this.userName}!`;
             }
         },
-        category: {
-            type: String,
+        _category: {
+            type: Schema.Types.ObjectId,
+            ref: 'Category',
             default: ""
         },
         tags: [{
-            type: String,
-            enum: ['gaming', 'music', 'coding', 'sports', 'other'],
-            default: 'other'
+            type: [{
+                type: String,
+                maxlength: 10
+            }],
+            validate: [(val) => {
+                return val.length <= 5;
+            }, 
+            'Tags exceeds the limit of 5'],
+            default: []
         }],
         viewers: {
             type: Number,

@@ -5,6 +5,14 @@ const mongooseUniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
 var categorySchema = new Schema({
+    _id: {
+        type: String,
+        required: true,
+        default: function () {
+            return this.name.split(' ').join('_');
+        },
+        unique: true
+    },
     name: {
         type: String,
         required: true,
@@ -14,10 +22,17 @@ var categorySchema = new Schema({
         type: Number,
         default: 0
     },
-    tags: {
-        type: [String],
+    tags: [{
+        type: [{
+            type: String,
+            maxlength: 10
+        }],
+        validate: [(val) => {
+            return val.length <= 5;
+        },
+            'Tags exceeds the limit of 5'],
         default: []
-    },
+    }],
 });
 
 categorySchema.plugin(mongoosePaginate);

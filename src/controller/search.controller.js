@@ -36,33 +36,6 @@ exports.searchStream = function (req, res, next) {
             }
         ));
     });
-
-    /*res.send(JSON.stringify(
-        {
-            streams:
-                [
-                    {
-                        username: 'test',
-                        category: 'csgo',
-                        title: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum',
-                        views: 0,
-                        tags: ['test1', 'vtuber', 'spain'],
-                    },
-                    {
-                        username: 'user123123',
-                        category: 'csgo',
-                        title: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum',
-                        views: 0,
-                        tags: ['test', 'vtuber', 'spain'],
-                    },
-                    {
-                        username: 'test2',
-                        followers: 0,
-                        about: 'this is a test about description',
-                    }
-                ]
-        }
-    ));*/
 };
 
 exports.searchCategory = function (req, res, next) {
@@ -86,35 +59,6 @@ exports.searchCategory = function (req, res, next) {
             }
         ));
     });
-
-
-    //let randomStreamers = db.search(req.query.page);
-    /*res.send(JSON.stringify(
-        {
-            categories:
-                [
-                    {
-                        name: 'minecraft',
-                        spectators: 2_000_000,
-                        tags: ['adventures games', 'mmo', 'survivor'],
-                        image: 'https://static.wikia.nocookie.net/c-s/images/8/88/2127186-box_minecraft_large.png/revision/latest?cb=20121218031643',
-
-                    },
-                    {
-                        name: 'minecraft dungeons',
-                        spectators: 2_000_000,
-                        tags: ['action', 'adventures games', 'rpg'],
-                        image: 'https://static.wikia.nocookie.net/c-s/images/8/88/2127186-box_minecraft_large.png/revision/latest?cb=20121218031643',
-                    },
-                    {
-                        name: 'Minecraft: Story Mode',
-                        spectators: 2_000_000,
-                        tags: ['adventures games', 'action'],
-                        image: 'https://static.wikia.nocookie.net/c-s/images/8/88/2127186-box_minecraft_large.png/revision/latest?cb=20121218031643',
-                    },
-                ]
-        }
-    ));*/
 };
 
 exports.search = function (req, res, next) {
@@ -123,7 +67,12 @@ exports.search = function (req, res, next) {
 
     let results = [];
 
-    User.find({ userName: query }, function (err, streamers) {
+    User.find({
+        $or: [
+            { userName: query },
+            { tags: query }
+        ]
+    }, function (err, streamers) {
         if (err) {
             res.send(err);
         }
@@ -144,7 +93,12 @@ exports.search = function (req, res, next) {
         });
     });
 
-    Category.find({ name: query }, function (err, categories) {
+    Category.find({
+        $or: [
+            { name: query },
+            { tags: query }
+        ]
+    }, function (err, categories) {
         if (err) {
             res.send(err);
         }
@@ -161,20 +115,4 @@ exports.search = function (req, res, next) {
     });
 
     res.send(JSON.stringify(results));
-
-    //let randomStreamers = db.search(req.query.page);
-    /*res.send(JSON.stringify(
-        {
-            streams:
-                [
-                    {
-                        username: 'test',
-                        category: 'csgo',
-                        title: 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum',
-                        views: 0,
-                        tags: ['test', 'vtuber', 'spain'],
-                    }
-                ]
-        }
-    ));*/
 };
