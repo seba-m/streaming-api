@@ -1,4 +1,4 @@
-const {profile, stream, updateProfile, updateStream, deleteAccount} = require('../controller/user.controller');
+const { profile, stream, updateProfile, updateStream, deleteAccount } = require('../controller/user.controller');
 const { verifyToken } = require('../middlewares/jwt.middleware');
 
 

@@ -1,4 +1,5 @@
 const NodeMediaServer = require('node-media-server');
+const User = require('../models/User.model');
 
 class Rtmp {
     server;
@@ -51,9 +52,21 @@ class Rtmp {
         return regexstring.test(url);
     }
 
+    #existsStreamKey(key) {
+        return User.findOne({ streamKey: key });
+    }
+
+    #toggleIsLiveStream(key, isLive) {
+        User.findOneAndUpdate({ streamKey: key }, { isLive: isLive });
+    }
+
     #rejectStream(idStream) {
         let session = this.server.getSession(idStream);
         session.reject();
+    }
+
+    #modifyViewerCount(key, count) {
+        User.findOneAndUpdate({ streamKey: key }, { $inc: { "streamData.viewers": count } });
     }
 
     #configureStream() {
@@ -76,8 +89,10 @@ class Rtmp {
 
             console.log(`path = ${StreamPath} valid path = ${this.#validStreamUrl(StreamPath)}`);
 
-            /*if (!this.#validStreamUrl(StreamPath))
-                this.#rejectStream(id);*/
+            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(StreamPath.split('/')[2]))
+                this.#rejectStream(id);
+            else
+                this.#toggleIsLiveStream(id, true);
 
         });
 
@@ -87,12 +102,18 @@ class Rtmp {
 
         this.server.on('donePublish', (id, StreamPath, args) => {
             console.log('\n[6 NodeEvent on donePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+
+            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(StreamPath.split('/')[2]))
+                this.#rejectStream(id);
+            else
+                this.#toggleIsLiveStream(id, false);
         });
 
         this.server.on('prePlay', (id, StreamPath, args) => {
             console.log('\n[7 NodeEvent on prePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
             /*let session = this.server.getSession(id);
             session.reject();*/
+            this.#modifyViewerCount(id, 1);
         });
 
         this.server.on('postPlay', (id, StreamPath, args) => {
@@ -101,6 +122,7 @@ class Rtmp {
 
         this.server.on('donePlay', (id, StreamPath, args) => {
             console.log('\n[9 NodeEvent on donePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            this.#modifyViewerCount(id, -1);
         });
     }
 }

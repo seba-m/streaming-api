@@ -1,7 +1,27 @@
 const User = require("../models/User.model");
 
+var nodemailer = require('nodemailer');
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+
+var transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: process.env.email,
+		pass: process.env.password
+	}
+});
+
+function sendEmail(email, subject, text) {
+	var mailOptions = {
+		from: process.env.email,
+		to: email,
+		subject: subject,
+		text: text
+	};
+
+	transporter.sendMail(mailOptions);
+}
 
 function generateStreamKey() {
 	const { scryptSync, randomBytes } = require("crypto");
@@ -102,4 +122,19 @@ exports.signin = (req, res) => {
 				accessToken: token
 			});
 		});
+};
+
+exports.recoverPassword = function (req, res) {
+	User.findOne({ email: req.body.email }, function (err, user) {
+		if (err) {
+			return res.status(500).send({ message: err });
+		}
+
+		if (!user) {
+			return res.status(200).send({ message: "Email sent" });
+		}
+
+		sendEmail(user.email, "Password Recovery", "Your password is: " + user.password);
+		return res.status(200).send({ message: "Email sent" });
+	});
 };
