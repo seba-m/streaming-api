@@ -12,29 +12,31 @@ var transporter = nodemailer.createTransport({
 	}
 });
 
-function sendEmail(email, subject, text) {
+function sendEmail(email, subject, html) {
 	var mailOptions = {
 		from: process.env.email,
 		to: email,
 		subject: subject,
-		text: text
+		html: html
 	};
 
 	transporter.sendMail(mailOptions);
 }
 
-function generateStreamKey() {
+function randomKey(length) {
 	const { scryptSync, randomBytes } = require("crypto");
 	const salt = randomBytes(64).toString("hex")
-	const getHash = (password) => scryptSync(password, salt, 64).toString("hex");
+	const getHash = (password) => scryptSync(password, salt, length).toString("hex");
 
 	return getHash(new Date().getTime().toString());
 }
 
 exports.checkDuplicateUsernameOrEmail = (req, res, next) => {
-	// Username
 	User.findOne({
-		username: req.body.username
+		$or: [
+			{ userName: req.body.username },
+			{ email: req.body.username }
+		]
 	}).exec((err, user) => {
 		if (err) {
 			res.status(500).send({ message: err });
@@ -42,26 +44,48 @@ exports.checkDuplicateUsernameOrEmail = (req, res, next) => {
 		}
 
 		if (user) {
-			res.status(400).send({ message: "Failed! Username is already in use!" });
+			res.status(400).send({ message: "Failed! Username or Email is already in use!" });
 			return;
 		}
 	});
+};
 
-	// Email
+exports.activateAccount = function (req, res) {
+
+	let key = req.params.key;
+
+	if (!key) {
+		return res.status(400).send({ message: "Failed! Invalid key!1" });
+	}
+
 	User.findOne({
-		email: req.body.email
+		"activation.key": key
 	}).exec((err, user) => {
 		if (err) {
-			res.status(500).send({ message: err });
-			return;
+			return res.status(500).send({ message: err + key });
 		}
 
-		if (user) {
-			res.status(400).send({ message: "Failed! Email is already in use!" });
-			return;
+		if (!user) {
+			return res.status(400).send({ message: "Failed! Invalid key!" });
 		}
 
-		next();
+		user.activation.key = "";
+		user.activation.isVerified = true;
+
+		user.save((err) => {
+			if (err) {
+				return res.status(500).send({ message: err });
+			}
+			let loginUrl = process.env.clientUrl + "/login";
+			res.redirect(loginUrl);
+			/*
+			res.send(`
+				<h1>Account activated!, redirecting to login page...</h1>
+				<br>
+				<a href='${loginUrl}'>Click here if you are not redirected</a>
+				<script>window.location.href='${loginUrl}';</script>
+			`);*/
+		});
 	});
 };
 
@@ -72,22 +96,40 @@ exports.signup = (req, res) => {
 		email: req.body.email,
 		birthDate: req.body.birthDate,
 		password: bcrypt.hashSync(req.body.password, 8),
-		key: generateStreamKey(),
+		key: randomKey(64),
+		activation: {
+			key: randomKey(10)
+		}
 	});
 
 	user.save((err, user) => {
 		if (err) {
+			console.log(err);
 			res.status(500).send({ message: err });
 			return;
 		}
+
+		sendEmail(user.email, 
+			"uStream - Activate Account", 
+			`
+				<h3> Hello ${user.userName} </h3>
+				<p>Thank you for registering into our Application. Much Appreciated! Just one last step is laying ahead of you...</p>
+				<p>To activate your account please follow this link: <a target="_" href="${process.env.apiUrl}/api/auth/activate/${user.activation.key}">${process.env.apiUrl}/activate </a></p>
+				<p>Cheers</p>
+				<p>uStream Team</p>
+			`);
 
 		res.send({ message: "User was registered successfully!" });
 	});
 };
 
 exports.signin = (req, res) => {
+
 	User.findOne({
-		username: req.body.username
+		$or: [
+			{ userName: req.body.username },
+			{ email: req.body.username }
+		]
 	})
 		.exec((err, user) => {
 			if (err) {
@@ -111,6 +153,13 @@ exports.signin = (req, res) => {
 				});
 			}
 
+			if (!user.activation.isVerified) {
+				return res.status(401).send({
+					accessToken: null,
+					message: "Account not verified!"
+				});
+			}
+
 			var token = jwt.sign({ id: user.id }, process.env.secret, {
 				expiresIn: 86400 // 24 hours
 			});
@@ -121,7 +170,40 @@ exports.signin = (req, res) => {
 				email: user.email,
 				accessToken: token
 			});
+
 		});
+};
+
+exports.resetPassword = (req, res) => {
+	let key = req.params.key;
+	let password = req.body.password;
+
+	User.findOne({
+		email: req.body.email
+	}).exec((err, user) => {
+		if (err) {
+			return res.status(500).send({ message: err });
+		}
+
+		if (!user) {
+			return res.status(400).send({ message: "Failed! Invalid email!" });
+		}
+
+		if (user.activation.key != key) {
+			return res.status(400).send({ message: "Failed! Invalid key!" });
+		}
+
+		user.password = bcrypt.hashSync(password, 8);
+		user.activation.key = "";
+		user.save((err) => {
+			if (err) {
+				return res.status(500).send({ message: err });
+			}
+
+			return res.status(200).send({ message: "Password changed!" });
+		}
+		);
+	});
 };
 
 exports.recoverPassword = function (req, res) {
@@ -134,7 +216,17 @@ exports.recoverPassword = function (req, res) {
 			return res.status(200).send({ message: "Email sent" });
 		}
 
-		sendEmail(user.email, "Password Recovery", "Your password is: " + user.password);
+		user.resetPasswordToken = randomKey(64);
+		user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+		sendEmail(user.email, 
+			"uStream - Password Recovery", 
+			`
+				<h3> Hello ${user.userName} </h3>
+				<p>It seems that you have forgotten your password. No worries, we got you covered! Just follow this link to reset your password: <a target="_" href="${process.env.apiUrl}/api/auth/reset/${user.activation.key}?key=${user.resetPasswordToken}">${process.env.apiUrl}/reset </a></p>
+				<p>Cheers</p>
+				<p>uStream Team</p>
+			`);
 		return res.status(200).send({ message: "Email sent" });
 	});
 };

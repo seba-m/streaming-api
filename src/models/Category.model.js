@@ -7,11 +7,9 @@ const Schema = mongoose.Schema;
 var categorySchema = new Schema({
     _id: {
         type: String,
-        required: true,
         default: function () {
             return this.name.split(' ').join('_');
         },
-        unique: true
     },
     name: {
         type: String,

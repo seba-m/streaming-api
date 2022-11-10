@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
-const mongooseUniqueValidator = require('mongoose-unique-validator');
+const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate");
+const mongooseUniqueValidator = require("mongoose-unique-validator");
 
 const Schema = mongoose.Schema;
 
@@ -8,54 +8,54 @@ var userSchema = new Schema({
     userName: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
     birthDate: {
         type: Date,
-        min: '1900-01-01',
+        min: "1900-01-01",
         max: Date.now(),
-        required: true
+        required: true,
     },
     created_at: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     updated_at: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     key: {
         type: String,
-        required: true
+        required: true,
     },
-    /*following: {
-        type: [string],
-        default: []
-    },*/
+    following: {
+        type: [{ type: String }],
+        default: [],
+    },
     socialAccounts: {
         type: Array,
-        default: []
+        default: [],
     },
     followers: {
         type: Number,
-        default: 0
+        default: 0,
     },
     banner: {
         type: String,
-        default: ""
+        default: "",
     },
     avatar: {
         type: String,
-        default: ""
+        default: "",
     },
     about: {
         type: String,
@@ -63,60 +63,86 @@ var userSchema = new Schema({
         default: function () {
             return `Hello world!, im ${this.userName}.`;
         },
-        required: false
+        required: false,
+    },
+    activation: {
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        key: {
+            type: String,
+            default: "",
+        },
+    },
+    resetPassword: {
+        key: {
+            type: String,
+            default: "",
+        },
+        expires: {
+            type: Date,
+            default: Date.now,
+        },
     },
     streamData: {
-        name:{
+        name: {
             type: String,
             required: true,
-            default: function () { 
-                return this.userName; 
+            default: function () {
+                return this.userName;
             },
         },
         isLive: {
             type: Boolean,
-            default: false
+            default: false,
         },
         languages: {
             type: String,
             required: true,
-            enum: ['español', 'english'],
-            default: 'english'
+            enum: ["español", "english"],
+            default: "english",
         },
         streamStartTime: {
             type: Date,
-            default: Date.now
+            default: Date.now,
         },
         title: {
             type: String,
             maxlength: 75,
             default: function () {
                 return `It Was Me, ${this.userName}!`;
-            }
+            },
         },
         _category: {
             type: Schema.Types.ObjectId,
-            ref: 'Category',
-            default: ""
+            ref: "Category",
+            default: null,
         },
-        tags: [{
-            type: [{
-                type: String,
-                maxlength: 10
-            }],
-            validate: [(val) => {
-                return val.length <= 5;
-            }, 
-            'Tags exceeds the limit of 5'],
-            default: []
-        }],
+        tags: [
+            {
+                type: [
+                    {
+                        type: String,
+                        maxlength: 10,
+                    },
+                ],
+                validate: [
+                    (val) => {
+                        return val.length <= 5;
+                    },
+                    "Tags exceeds the limit of 5",
+                ],
+                default: [],
+            },
+        ],
         viewers: {
             type: Number,
-            default: 0
-        }
-    }
+            default: 0,
+        },
+    },
 });
 
 userSchema.plugin(mongoosePaginate);
-userSchema.plugin(mongooseUniqueValidator); 
-module.exports = mongoose.model('User', userSchema);
+userSchema.plugin(mongooseUniqueValidator);
+module.exports = mongoose.model("User", userSchema);

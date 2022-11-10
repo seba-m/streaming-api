@@ -1,9 +1,9 @@
 const {
-  viewStreamer,
-  topStreamers,
-  following,
-  follow,
-  unfollow,
+    viewStreamer,
+    topStreamers,
+    following,
+    follow,
+    unfollow,
 } = require("../controller/stream.controller");
 const { verifyToken } = require('../middlewares/jwt.middleware');
 

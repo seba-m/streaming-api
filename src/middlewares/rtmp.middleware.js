@@ -21,9 +21,9 @@ class Rtmp {
         auth: {
             play: false,
             publish: false,
-            api: true,
+            /*api: true,
             api_user: 'admin',
-            api_pass: 'nms2018',
+            api_pass: 'nms2018', */
         },
         trans: {
             ffmpeg: './ffmpeg.exe',
