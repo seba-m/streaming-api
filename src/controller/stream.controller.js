@@ -1,138 +1,144 @@
-const User = require('../models/User.model');
+const User = require("../models/User.model");
 
 exports.follow = function (req, res, next) {
-    let username = req.body.username;
-    let currentUser = req.userId;
+  let username = req.body.username;
+  let currentUser = req.userId;
 
-    User.findByIdAndUpdate({ userName: username }, 
+  User.findByIdAndUpdate(
+    { userName: username },
+    {
+      $inc: {
+        followers: 1,
+      },
+    },
+    function (err, user) {
+      if (err) {
+        return res.status(404).send({ message: err });
+      }
+
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+    }
+  )
+    .select("_id")
+    .exec((err, id) => {
+      User.findByIdAndUpdate(
+        { _id: currentUser },
         {
-            $inc: {
-                followers: 1
-            }
-        }, 
-        function (err, user) {
-            if (err) {
-                return res.status(404).send({ message: err });
-            }
-            
-            if (!user) {
-                return res.status(404).send("User not found");
-            }
-        }
-    ).select('_id')
-    .exec(
-        User.findByIdAndUpdate({ _id: currentUser },
-            {
-                $push: {
-                    following: username
-                }
-            },
-            function (err, user) {
-                if (err) {
-                    return res.status(404).send({ message: err });
-                }
-
-                if (!user) {
-                    return res.status(404).send("User not found");
-                }
-
-                return res.status(200).send("Followed");
-            }
-        )
-    );
-}
-
-exports.unFollow = function (req, res, next) {
-    let username = req.body.username;
-    let currentUser = req.userId;
-
-    User.findByIdAndUpdate({ userName: username },
-        {
-            $inc: {
-                followers: -1
-            }
+          $push: {
+            following: id,
+          },
         },
         function (err, user) {
-            if (err) {
-                return res.status(404).send({ message: err });
-            }
+          if (err) {
+            return res.status(404).send({ message: err });
+          }
 
-            if (!user) {
-                return res.status(404).send("User not found");
-            }
+          if (!user) {
+            return res.status(404).send("User not found");
+          }
+
+          return res.status(200).send("Followed");
         }
-    ).select('_id')
-    .exec(
-        User.findByIdAndUpdate({ _id: currentUser },
-            {
-                $pull: {
-                    following: username
-                }
-            },
-            function (err, user) {
-                if (err) {
+      );
+    });
+};
+
+exports.unfollow = function (req, res, next) {
+  let username = req.body.username;
+  let currentUser = req.userId;
+
+  User.findAndUpdate(
+    { userName: username },
+    {
+      $inc: {
+        followers: -1,
+      },
+    },
+    function (err, user) {
+      if (err) {
+        return res.status(404).send({ message: err });
+      }
+
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+    }
+  )
+    .select("_id")
+    .exec((err, id) => {
+              User.findByIdAndUpdate(
+                { _id: currentUser },
+                {
+                  $pull: {
+                    following: id,
+                  },
+                },
+                function (err, user) {
+                  if (err) {
                     return res.status(404).send({ message: err });
-                }
+                  }
 
-                if (!user) {
+                  if (!user) {
                     return res.status(404).send("User not found");
-                }
+                  }
 
-                return res.status(200).send("Unfollowed");
-            }
-        )
+                  return res.status(200).send("Unfollowed");
+                }
+              );
+        }
     );
-}
+};
 
 exports.following = function (req, res, next) {
-    //search over database for the user following
+  //search over database for the user following
 
-    let currentUser = req.userId;
+  let currentUser = req.userId;
 
-    User.findById({ _id: currentUser }, function (err, user) {
-        if (err) {
-            return res.status(404).send({ message: err });
-        }
+  User.findById({ _id: currentUser }, function (err, user) {
+    if (err) {
+      return res.status(404).send({ message: err });
+    }
 
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
 
-        return res.status(200).send(JSON.stringify(user.following));
-    });
-}
+    return res.status(200).send(JSON.stringify(user.following));
+  });
+};
 
 exports.viewStreamer = function (req, res, next) {
+  let username = req.body.username;
 
-    let username = req.body.username;
+  User.findOne({ userName: username }, function (err, user) {
+    if (err) {
+      return res.status(404).send({ message: err });
+    }
 
-    User.findOne({ userName: username }, function (err, user) {
-        if (err) {
-            return res.status(404).send({ message: err });
-        }
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
 
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
+    let streamer = {
+      url: `http://localhost:8000/live/${user.key}.flv`,
+      username: user.userName,
+      about: user.about,
+      title: user.title,
+      tags: user.tags,
+      time: user.time,
+      category: user.category,
+      followers: user.followers,
+      following: user.following,
+      islive: user.islive,
+    };
 
-        let streamer = {
-            url: `http://localhost:8000/live/${user.key}.flv`,
-            username: user.userName,
-            about: user.about,
-            title: user.title,
-            tags: user.tags,
-            time: user.time,
-            category: user.category,
-            followers: user.followers,
-            following: user.following,
-            islive: user.islive
-        }
+    return res.status(200).send(JSON.stringify(streamer));
+  });
 
-        return res.status(200).send(JSON.stringify(streamer));
-    });
-
-    //TODO: search streamer data using streamer name on database
-    /*res.send(JSON.stringify({
+  //TODO: search streamer data using streamer name on database
+  /*res.send(JSON.stringify({
         url: `http://localhost:8000/live/${req.params.streamName}.flv`,
         username: 'test',
         about: 'this is a test about description',
@@ -144,35 +150,32 @@ exports.viewStreamer = function (req, res, next) {
         views: 0,
         islive: false
     }));*/
-}
+};
 
 exports.topStreamers = function (req, res, next) {
+  //get random 10 streamers from database using sample and size
 
-    //get random 10 streamers from database using sample and size
+  User.aggregate([{ $sample: { size: 10 } }], function (err, users) {
+    if (err) {
+      return res.status(404).send({ message: err });
+    }
 
-    User.aggregate([
-        { $sample: { size: 10 } }
-    ], function (err, users) {
-        if (err) {
-            return res.status(404).send({ message: err });
-        }
+    if (!users) {
+      return res.status(404).send("Users not found");
+    }
 
-        if (!users) {
-            return res.status(404).send("Users not found");
-        }
+    let streamers = [];
 
-        let streamers = [];
-
-        users.forEach(user => {
-            streamers.push({
-                username: user.userName,
-            });
-        });
-
-        return res.status(200).send(JSON.stringify(streamers));
+    users.forEach((user) => {
+      streamers.push({
+        username: user.userName,
+      });
     });
 
-    /*res.send(JSON.stringify(
+    return res.status(200).send(JSON.stringify(streamers));
+  });
+
+  /*res.send(JSON.stringify(
         {
             streamers:
                 [
@@ -204,4 +207,4 @@ exports.topStreamers = function (req, res, next) {
                 ]
         }
     ));*/
-}
+};

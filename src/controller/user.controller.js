@@ -39,8 +39,7 @@ exports.updateProfile = (req, res, next) => {
         user.updated_at = Date.now();
         user.save((err) => {
             if (err) {
-                res.status(500).send({ message: err });
-                return;
+                return res.status(500).send({ message: err });
             }
             res.status(200).send({ message: "User was updated successfully." });
         });

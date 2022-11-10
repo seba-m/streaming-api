@@ -1,5 +1,6 @@
 const NodeMediaServer = require('node-media-server');
 const User = require('../models/User.model');
+const Category = require('../models/Category.model');
 
 class Rtmp {
     server;
@@ -66,7 +67,10 @@ class Rtmp {
     }
 
     #modifyViewerCount(key, count) {
-        User.findOneAndUpdate({ streamKey: key }, { $inc: { "streamData.viewers": count } });
+        const { streamData } = User.findOneAndUpdate({ streamKey: key }, { $inc: { "streamData.viewers": count } }, { new: true });
+
+        if (streamData?.category)
+            Category.findOneAndUpdate({ _id: streamData._category }, { $inc: { spectators: count } });
     }
 
     #configureStream() {

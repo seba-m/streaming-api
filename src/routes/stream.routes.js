@@ -1,4 +1,10 @@
-const { viewStreamer, topStreamers, following, followStreamer, unfollowStreamer } = require('../controller/stream.controller');
+const {
+  viewStreamer,
+  topStreamers,
+  following,
+  follow,
+  unfollow,
+} = require("../controller/stream.controller");
 const { verifyToken } = require('../middlewares/jwt.middleware');
 
 module.exports = function (app) {
@@ -8,7 +14,7 @@ module.exports = function (app) {
 
     app.get('/api/stream/following', [verifyToken], following);
 
-    app.post('/api/stream/follow', [verifyToken], followStreamer);
+    app.post("/api/stream/follow", [verifyToken], follow);
 
-    app.post('/api/stream/unfollow', [verifyToken], unfollowStreamer);
+    app.post("/api/stream/unfollow", [verifyToken], unfollow);
 };

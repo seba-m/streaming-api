@@ -37,10 +37,10 @@ var userSchema = new Schema({
         type: String,
         required: true
     },
-    following: {
+    /*following: {
         type: [string],
         default: []
-    },
+    },*/
     socialAccounts: {
         type: Array,
         default: []
