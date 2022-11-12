@@ -21,7 +21,7 @@
     "mongoose-paginate": "^5.0.3",
     "mongoose-unique-validator": "^3.1.0",
     "morgan": "~1.9.1",
-    "node-media-server": "^2.4.7",
+    "node-media-server": "github:seba-m/node-media-server",
     "nodemailer": "^6.8.0"
   },
   "devDependencies": {

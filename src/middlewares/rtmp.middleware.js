@@ -20,13 +20,9 @@ class Rtmp {
         },
         auth: {
             play: false,
-            publish: false,
-            /*api: true,
-            api_user: 'admin',
-            api_pass: 'nms2018', */
+            publish: false
         },
         trans: {
-            ffmpeg: './ffmpeg.exe',
             tasks: [
                 {
                     app: 'live',
