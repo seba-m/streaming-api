@@ -1,7 +1,9 @@
 const User = require("../models/User.model");
 
+const { sanitizeText, textRegex } = require("../Utils/Sanitize.util");
+
 exports.follow = function (req, res, next) {
-    let username = req.body.username;
+    let username = sanitizeText(req.body.username);
     let currentUser = req.userId;
 
     User.findByIdAndUpdate(
@@ -46,7 +48,7 @@ exports.follow = function (req, res, next) {
 };
 
 exports.unfollow = function (req, res, next) {
-    let username = req.body.username;
+    let username = sanitizeText(req.body.username);
     let currentUser = req.userId;
 
     User.findAndUpdate(
@@ -110,7 +112,7 @@ exports.following = function (req, res, next) {
 };
 
 exports.viewStreamer = function (req, res, next) {
-    let username = req.body.username;
+    let username = sanitizeText(req.params.streamName);
 
     User.findOne({ userName: username }, function (err, user) {
         if (err) {
@@ -118,28 +120,29 @@ exports.viewStreamer = function (req, res, next) {
         }
 
         if (!user) {
+            console.log("User not found", user);
             return res.status(404).send("User not found");
         }
 
         let streamer = {
-            url: `http://localhost:8000/live/${user.key}.flv`,
+            url: `${process.env.streamingUrl}/app/${user.key}.flv`,
             username: user.userName,
             about: user.about,
-            title: user.title,
-            tags: user.tags,
-            time: user.time,
-            category: user.category,
+            title: user.streamData.title,
+            tags: user.streamData.tags,
+            time: user.streamData.streamStartTime,
+            category: user.streamData._category,
             followers: user.followers,
-            following: user.following,
-            islive: user.islive,
+            //following: user.following,
+            islive: user.streamData.isLive,
         };
-
+        
         return res.status(200).send(JSON.stringify(streamer));
     });
 
     //TODO: search streamer data using streamer name on database
     /*res.send(JSON.stringify({
-          url: `http://localhost:8000/live/${req.params.streamName}.flv`,
+          url: `${process.env.streamingUrl}/live/${req.params.streamName}.flv`,
           username: 'test',
           about: 'this is a test about description',
           title: 'test stream xd',

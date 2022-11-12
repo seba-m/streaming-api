@@ -53,12 +53,28 @@ class Rtmp {
         return regexstring.test(url);
     }
 
-    #existsStreamKey(key) {
-        return User.findOne({ streamKey: key });
+    async #existsStreamKey(key) {
+        const user = await User.findOne({ key: key });
+
+        return user ? true : false;
     }
 
     #toggleIsLiveStream(key, isLive) {
-        User.findOneAndUpdate({ streamKey: key }, { isLive: isLive });
+        User.findOneAndUpdate({ key: key }, {
+            $set: {
+                "streamData.isLive": isLive
+            }
+        }, { new: true }, (err, user) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            if (!user) {
+                console.log("User not found");
+                return;
+            }
+        });
     }
 
     #rejectStream(idStream) {
@@ -67,7 +83,7 @@ class Rtmp {
     }
 
     #modifyViewerCount(key, count) {
-        const { streamData } = User.findOneAndUpdate({ streamKey: key }, { $inc: { "streamData.viewers": count } }, { new: true });
+        const { streamData } = User.findOneAndUpdate({ "key": key }, { $inc: { "streamData.viewers": count } }, { new: true });
 
         if (streamData?.category)
             Category.findOneAndUpdate({ _id: streamData._category }, { $inc: { spectators: count } });
@@ -89,44 +105,44 @@ class Rtmp {
         });*/
 
         this.server.on('prePublish', (id, StreamPath, args) => {
-            console.log('\n[4 NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-
-            console.log(`path = ${StreamPath} valid path = ${this.#validStreamUrl(StreamPath)}`);
-
-            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(StreamPath.split('/')[2]))
+            //console.log('\n[4 NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            let streamKey = StreamPath.split('/')[2];
+            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(streamKey))
                 this.#rejectStream(id);
             else
-                this.#toggleIsLiveStream(id, true);
+                this.#toggleIsLiveStream(streamKey, true);
 
         });
 
         this.server.on('postPublish', (id, StreamPath, args) => {
-            console.log('\n[5 NodeEvent on postPublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            //console.log('\n[5 NodeEvent on postPublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
         });
 
         this.server.on('donePublish', (id, StreamPath, args) => {
-            console.log('\n[6 NodeEvent on donePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-
-            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(StreamPath.split('/')[2]))
+            //console.log('\n[6 NodeEvent on donePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            let streamKey = StreamPath.split('/')[2];
+            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(streamKey))
                 this.#rejectStream(id);
             else
-                this.#toggleIsLiveStream(id, false);
+                this.#toggleIsLiveStream(streamKey, false);
         });
 
         this.server.on('prePlay', (id, StreamPath, args) => {
-            console.log('\n[7 NodeEvent on prePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            //console.log('\n[7 NodeEvent on prePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
             /*let session = this.server.getSession(id);
             session.reject();*/
-            this.#modifyViewerCount(id, 1);
+            let streamKey = StreamPath.split('/')[2];
+            this.#modifyViewerCount(streamKey, 1);
         });
 
         this.server.on('postPlay', (id, StreamPath, args) => {
-            console.log('\n[8 NodeEvent on postPlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            //console.log('\n[8 NodeEvent on postPlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
         });
 
         this.server.on('donePlay', (id, StreamPath, args) => {
-            console.log('\n[9 NodeEvent on donePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-            this.#modifyViewerCount(id, -1);
+            //console.log('\n[9 NodeEvent on donePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            let streamKey = StreamPath.split('/')[2];
+            this.#modifyViewerCount(streamKey, -1);
         });
     }
 }

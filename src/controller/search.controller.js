@@ -1,14 +1,7 @@
 const User = require("../models/User.model");
 const Category = require("../models/Category.model")
 
-function sanitizeText(string) {
-    return string.replace(/[^ a-zA-Z0-9]/g, "");
-}
-
-function textRegex(name) {
-    let username = sanitizeText(name);
-    return new RegExp(username);
-}
+const { textRegex } = require("../Utils/Sanitize.util");
 
 exports.searchStream = function (req, res, next) {
 

@@ -1,27 +1,9 @@
 const User = require("../models/User.model");
 
-var nodemailer = require('nodemailer');
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-var transporter = nodemailer.createTransport({
-	service: 'gmail',
-	auth: {
-		user: process.env.email,
-		pass: process.env.password
-	}
-});
-
-function sendEmail(email, subject, html) {
-	var mailOptions = {
-		from: process.env.email,
-		to: email,
-		subject: subject,
-		html: html
-	};
-
-	transporter.sendMail(mailOptions);
-}
+const { sendEmail } = require("../services/email.service");
 
 function randomKey(length) {
 	const { scryptSync, randomBytes } = require("crypto");
@@ -47,6 +29,8 @@ exports.checkDuplicateUsernameOrEmail = (req, res, next) => {
 			res.status(400).send({ message: "Failed! Username or Email is already in use!" });
 			return;
 		}
+
+		next();
 	});
 };
 
@@ -90,7 +74,6 @@ exports.activateAccount = function (req, res) {
 };
 
 exports.signup = (req, res) => {
-
 	const user = new User({
 		userName: req.body.username,
 		email: req.body.email,
@@ -108,7 +91,6 @@ exports.signup = (req, res) => {
 			res.status(500).send({ message: err });
 			return;
 		}
-
 		sendEmail(user.email, 
 			"uStream - Activate Account", 
 			`
@@ -118,7 +100,6 @@ exports.signup = (req, res) => {
 				<p>Cheers</p>
 				<p>uStream Team</p>
 			`);
-
 		res.send({ message: "User was registered successfully!" });
 	});
 };
