@@ -39,7 +39,7 @@ exports.activateAccount = function (req, res) {
 	let key = req.params.key;
 
 	if (!key) {
-		return res.status(400).send({ message: "Failed! Invalid key!1" });
+		return res.status(400).send({ message: "Failed! Invalid key!" });
 	}
 
 	User.findOne({

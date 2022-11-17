@@ -18,9 +18,17 @@ class Rtmp {
             allow_origin: "*",
             mediaroot: './media/streamvideo',
         },
+        https: {
+            port: 8443,
+            key: "./ssl/url/private.key",
+            cert: "./ssl/url/certificate.crt"
+        },
         auth: {
+            api: true,
+            api_user: process.env.rtmpApiUser,
+            api_pass: process.env.rtmpApiPass,
             play: false,
-            publish: false
+            publish: false,
         },
         trans: {
             tasks: [

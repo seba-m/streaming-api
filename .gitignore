@@ -29,3 +29,5 @@ ffmpeg.*
 
 # media
 /media
+
+/ssl
