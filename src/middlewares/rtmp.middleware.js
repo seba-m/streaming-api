@@ -14,23 +14,36 @@ class Rtmp {
             ping_timeout: 60
         },
         http: {
-            port: 8000,
+            enabled: false,
+            admin: false,
+            api: false,
             allow_origin: "*",
             mediaroot: './media/streamvideo',
         },
         https: {
-            port: 8443,
+            port: 8000,
+            enabled: true,
             key: "./ssl/url/private.key",
-            cert: "./ssl/url/certificate.crt"
+            cert: "./ssl/url/certificate.crt",
+            ca: "./ssl/url/ca_bundle.crt"
         },
         auth: {
-            api: true,
-            api_user: process.env.rtmpApiUser,
-            api_pass: process.env.rtmpApiPass,
             play: false,
             publish: false,
         },
         trans: {
+            tasks: [
+                {
+                  app: 'live', // or other
+                  hls: true,
+                  hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
+                  dash: true,
+                  dashFlags: '[f=dash:window_size=3:extra_window_size=5]',
+                  'websocket-flv': true,
+                },
+            ]
+        }
+        /*trans: {
             tasks: [
                 {
                     app: 'live',
@@ -42,7 +55,7 @@ class Rtmp {
                     dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
                 }
             ]
-        }
+        }*/
     };
 
     constructor() {

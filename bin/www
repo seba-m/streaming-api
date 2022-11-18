@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
 var app = require('../app');
-var debug = require('debug')('backend:server');
 var http = require('http');
 var https = require('https');
 var fs = require("fs");
@@ -16,8 +11,8 @@ var options = {
   ca: fs.readFileSync("./ssl/url/ca_bundle.crt", {encoding:'utf8'})
 };
 
-var serverHttp = http.createServer(app);
+//var serverHttp = http.createServer(app);
 var serverHttps = https.createServer(options, app);
 
-serverHttp.listen('80');
+//serverHttp.listen('80');
 serverHttps.listen('443');

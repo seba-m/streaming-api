@@ -140,7 +140,6 @@ exports.viewStreamer = function (req, res, next) {
         return res.status(200).send(JSON.stringify(streamer));
     });
 
-    //TODO: search streamer data using streamer name on database
     /*res.send(JSON.stringify({
           url: `${process.env.streamingUrl}/live/${req.params.streamName}.flv`,
           username: 'test',

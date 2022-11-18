@@ -5,9 +5,14 @@ const { textRegex } = require("../Utils/Sanitize.util");
 
 exports.searchStream = function (req, res, next) {
 
-    let streamerRegex = textRegex(req.query.query);
+    let query = textRegex(req.query.query);
 
-    User.find({ userName: streamerRegex }, function (err, streamers) {
+    User.find({
+        $or: [
+            { userName: query },
+            { tags: query }
+        ]
+    }, function (err, streamers) {
         if (err) {
             res.send(err);
         }
@@ -33,9 +38,14 @@ exports.searchStream = function (req, res, next) {
 
 exports.searchCategory = function (req, res, next) {
 
-    let categoryName = textRegex(req.query.query);
+    let query = textRegex(req.query.query);
 
-    Category.find({ name: categoryName }, function (err, categories) {
+    Category.find({
+        $or: [
+            { name: query },
+            { tags: query }
+        ]
+    }, function (err, categories) {
         if (err) {
             res.send(err);
         }

@@ -13,11 +13,11 @@ function randomKey(length) {
 	return getHash(new Date().getTime().toString());
 }
 
-exports.checkDuplicateUsernameOrEmail = (req, res, next) => {
+exports.checkDuplicate = (req, res, next) => {
 	User.findOne({
 		$or: [
 			{ userName: req.body.username },
-			{ email: req.body.username }
+			{ email: req.body.email }
 		]
 	}).exec((err, user) => {
 		if (err) {

@@ -1,4 +1,4 @@
-const { checkDuplicateUsernameOrEmail, signin, signup, recoverPassword, activateAccount, resetPassword } = require('../controller/auth.controller');
+const { checkDuplicate, signin, signup, recoverPassword, activateAccount, resetPassword } = require('../controller/auth.controller');
 
 module.exports = function (app) {
 
@@ -11,7 +11,7 @@ module.exports = function (app) {
     });
 
     // url, callback & function
-    app.post('/api/auth/signup', [checkDuplicateUsernameOrEmail], signup);
+    app.post('/api/auth/signup', [checkDuplicate], signup);
 
     app.post('/api/auth/signin', signin);
 
