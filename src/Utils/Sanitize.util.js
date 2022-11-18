@@ -1,9 +1,8 @@
 const sanitizeText = (string, space=false) => {
-    if (!space) {
+    if (!space) 
         return string.replace(/[^a-zA-Z0-9 ]/g, "");
-    }
 
-    return string.replace(/[^ a-zA-Z0-9]/g, "");
+    return string.replace(/[^a-zA-Z0-9]/g, "");
 };
 
 const textRegex = (name) => {

@@ -155,7 +155,7 @@ exports.viewStreamer = function (req, res, next) {
 };
 
 exports.topStreamers = function (req, res, next) {
-    User.aggregate([{ $sample: { size: 10 } }], function (err, users) {
+    /*User.aggregate([{ $sample: { size: 10 } }], function (err, users) {
         if (err) {
             return res.status(404).send({ message: err });
         }
@@ -173,38 +173,37 @@ exports.topStreamers = function (req, res, next) {
         });
 
         return res.status(200).send(JSON.stringify(streamers));
-    });
+    });*/
 
-    /*res.send(JSON.stringify(
-          {
-              streamers:
-                  [
-                      {
-                          username: 'test',
-                          avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                          banner: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                      },
-                      {
-                          username: 'test2',
-                          avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                          banner: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                      },
-                      {
-                          username: 'test3',
-                          avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                          banner: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                      },
-                      {
-                          username: 'test4',
-                          avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                          banner: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                      },
-                      {
-                          username: 'test5',
-                          avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                          banner: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
-                      },
-                  ]
-          }
-      ));*/
+    res.send(JSON.stringify(
+        
+            [
+                {
+                    username: 'test',
+                    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/74aca484-10fe-4a74-b5ed-bb4a5414c1bb-profile_image-300x300.png",
+                    banner: "https://images6.alphacoders.com/805/805656.jpg",
+                },
+                {
+                    username: 'test2',
+                    avatar: "https://avatarfiles.alphacoders.com/241/thumb-241437.png",
+                    banner: "https://t4.ftcdn.net/jpg/04/76/97/21/360_F_476972142_uRS5wPTyt0ydlExUPxG5F3MftFVNrRXQ.jpg",
+                },
+                {
+                    username: 'test3',
+                    avatar: "https://avatarfiles.alphacoders.com/190/thumb-190579.jpg",
+                    banner: "https://images3.alphacoders.com/157/thumb-1920-157265.jpg",
+                },
+                {
+                    username: 'test4',
+                    avatar: "https://avatarfiles.alphacoders.com/132/thumb-132614.jpg",
+                    banner: "https://images.hdqwalls.com/wallpapers/red-dead-redemption-4k-landhscape-84.jpg",
+                },
+                {
+                    username: 'test5',
+                    avatar: "https://avatarfiles.alphacoders.com/304/thumb-304282.png",
+                    banner: "https://wallpapercave.com/wp/wp9495570.jpg",
+                },
+            ]
+          
+      ));
 };
