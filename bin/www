@@ -4,11 +4,18 @@ var app = require('../app');
 var http = require('http');
 var https = require('https');
 var fs = require("fs");
+var dotenv = require('dotenv');
+var { Rtmp } = require("../src/middlewares/rtmp.middleware");
+var mongoose = require('mongoose');
+
+dotenv.config({ path: './.env' });
+var rtmp = new Rtmp();
+mongoose.connect(process.env.dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 
 var options = {
-  key: fs.readFileSync("./ssl/url/private.key", {encoding:'utf8'}),
-  cert: fs.readFileSync("./ssl/url/certificate.crt", {encoding:'utf8'}),
-  ca: fs.readFileSync("./ssl/url/ca_bundle.crt", {encoding:'utf8'})
+  key: fs.readFileSync("./ssl/url/private.key", { encoding: 'utf8' }),
+  cert: fs.readFileSync("./ssl/url/certificate.crt", { encoding: 'utf8' }),
+  ca: fs.readFileSync("./ssl/url/ca_bundle.crt", { encoding: 'utf8' })
 };
 
 //var serverHttp = http.createServer(app);

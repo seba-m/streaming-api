@@ -4,7 +4,7 @@ const User = require('../models/User.model');
 exports.profile = (req, res, next) => {
     User.findById(req.userId, { password: 0 }, (err, user) => {
         if (err) {
-            return res.status(500).send({ message: err });
+            return res.status(500).send({ message: "Server error." });
         }
         if (!user) {
             return res.status(404).send({ message: "User Not found." });
@@ -16,7 +16,7 @@ exports.profile = (req, res, next) => {
 exports.stream = (req, res, next) => {
     User.findById(req.userId, { password: 0 }, (err, user) => {
         if (err) {
-            return res.status(500).send({ message: err });
+            return res.status(500).send({ message: "Server error." });
         }
         if (!user) {
             return res.status(404).send({ message: "User Not found." });
@@ -28,7 +28,7 @@ exports.stream = (req, res, next) => {
 exports.updateProfile = (req, res, next) => {
     User.findById(req.userId, (err, user) => {
         if (err) {
-            return res.status(500).send({ message: err });
+            return res.status(500).send({ message: "Server error." });
         }
         if (!user) {
             return res.status(404).send({ message: "User Not found." });
@@ -39,7 +39,7 @@ exports.updateProfile = (req, res, next) => {
         user.updated_at = Date.now();
         user.save((err) => {
             if (err) {
-                return res.status(500).send({ message: err });
+                return res.status(500).send({ message: "Server error." });
             }
             res.status(200).send({ message: "User was updated successfully." });
         });
@@ -49,7 +49,7 @@ exports.updateProfile = (req, res, next) => {
 exports.updateStream = (req, res, next) => {
     User.findById(req.userId, (err, user) => {
         if (err) {
-            return res.status(500).send({ message: err });
+            return res.status(500).send({ message: "Server error." });
         }
         if (!user) {
             return res.status(404).send({ message: "User Not found." });
@@ -60,7 +60,7 @@ exports.updateStream = (req, res, next) => {
         user.streamData.updated_at = Date.now();
         user.save((err) => {
             if (err) {
-                res.status(500).send({ message: err });
+                res.status(500).send({ message: "Server error." });
                 return;
             }
             res.status(200).send({ message: "User stream was updated successfully." });
@@ -71,7 +71,7 @@ exports.updateStream = (req, res, next) => {
 exports.deleteAccount = (req, res, next) => {
     User.findByIdAndRemove(req.userId, (err, user) => {
         if (err) {
-            return res.status(500).send({ message: err });
+            return res.status(500).send({ message: "Server error." });
         }
         if (!user) {
             return res.status(404).send({ message: "User Not found." });

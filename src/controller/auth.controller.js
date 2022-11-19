@@ -21,7 +21,7 @@ exports.checkDuplicate = (req, res, next) => {
 		]
 	}).exec((err, user) => {
 		if (err) {
-			res.status(500).send({ message: err });
+			res.status(500).send({ message: "Server error." });
 			return;
 		}
 
@@ -46,7 +46,7 @@ exports.activateAccount = function (req, res) {
 		"activation.key": key
 	}).exec((err, user) => {
 		if (err) {
-			return res.status(500).send({ message: err + key });
+			return res.status(500).send({ message: "Server error." + key });
 		}
 
 		if (!user) {
@@ -58,7 +58,7 @@ exports.activateAccount = function (req, res) {
 
 		user.save((err) => {
 			if (err) {
-				return res.status(500).send({ message: err });
+				return res.status(500).send({ message: "Server error." });
 			}
 			let loginUrl = process.env.clientUrl + "/login";
 			res.redirect(loginUrl);
@@ -88,7 +88,7 @@ exports.signup = (req, res) => {
 	user.save((err, user) => {
 		if (err) {
 			console.log(err);
-			res.status(500).send({ message: err });
+			res.status(500).send({ message: "Server error." });
 			return;
 		}
 		sendEmail(user.email, 
@@ -114,7 +114,7 @@ exports.signin = (req, res) => {
 	})
 		.exec((err, user) => {
 			if (err) {
-				res.status(500).send({ message: err });
+				res.status(500).send({ message: "Server error." });
 				return;
 			}
 
@@ -163,7 +163,7 @@ exports.resetPassword = (req, res) => {
 		email: req.body.email
 	}).exec((err, user) => {
 		if (err) {
-			return res.status(500).send({ message: err });
+			return res.status(500).send({ message: "Server error." });
 		}
 
 		if (!user) {
@@ -178,7 +178,7 @@ exports.resetPassword = (req, res) => {
 		user.activation.key = "";
 		user.save((err) => {
 			if (err) {
-				return res.status(500).send({ message: err });
+				return res.status(500).send({ message: "Server error." });
 			}
 
 			return res.status(200).send({ message: "Password changed!" });
@@ -190,7 +190,7 @@ exports.resetPassword = (req, res) => {
 exports.recoverPassword = function (req, res) {
 	User.findOne({ email: req.body.email }, function (err, user) {
 		if (err) {
-			return res.status(500).send({ message: err });
+			return res.status(500).send({ message: "Server error." });
 		}
 
 		if (!user) {
