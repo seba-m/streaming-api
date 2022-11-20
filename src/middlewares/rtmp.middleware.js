@@ -5,7 +5,7 @@ const Category = require('../models/Category.model');
 class Rtmp {
     server;
     #config = {
-        logType: 0,
+        logType: 1,
         rtmp: {
             port: 1935,
             chunk_size: 60000,
