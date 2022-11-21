@@ -1,9 +1,7 @@
 const User = require("../models/User.model");
 const { updateImage, getImage, deleteImage } = require("../services/AwsS3.service");
 
-const { v4: uuidv4 } = require('uuid');
-
-exports.updateBanner = function (req, res, next) {
+exports.updateBanner = function (req, res) {
     User.findById(req.userId, (err, user) => {
         if (err) {
             return res.status(500).send({ message: "Server error." });
@@ -26,8 +24,16 @@ exports.updateBanner = function (req, res, next) {
     });
 };
 
-exports.updateAvatar = function (req, res, next) {
-    User.findById(req.userId, (err, user) => {
+exports.updateAvatar = function (req, res) {
+
+    console.log("files ["+JSON.stringify(req.file)+"]")
+    if (!req.file) {
+        return res.status(502).send({ message: "Server error." });
+    }
+
+    return res.status(200).send({ message: "Banner updated successfully." }); 
+
+    /*User.findById(req.userId, (err, user) => {
         if (err) {
             return res.status(500).send({ message: "Server error." });
         }
@@ -38,7 +44,15 @@ exports.updateAvatar = function (req, res, next) {
         var filename = uuidv4();
         var imagePath = `uploads/user/avatar/${filename}.jpg`;
         updateImage(req.file.path, imagePath, res);
-    });
+
+        user.avatar = filename;
+        user.save((err) => {
+            if (err) {
+                return res.status(500).send({ message: "Server error." });
+            }
+            return res.status(200).send({ message: "Banner updated successfully." });
+        });
+    });*/
 };
 
 exports.deleteBanner = function (req, res, next) {

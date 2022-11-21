@@ -1,30 +1,7 @@
-var multer = require("multer");
+const multerhelper = require("../helpers/multer.helper");  
 
 const { updateBanner, updateAvatar, deleteBanner, deleteAvatar, getBanner, getAvatar } = require('../controller/image.controller');
 const { verifyToken } = require('../middlewares/jwt.middleware');
-
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: 'uploads/',
-        filename: function (req, file, cb) {
-            cb(null, file.originalname);
-        }
-    }),
-    limits: { fileSize: 1_048_576 }, // 1MB
-    fileFilter: function (req, file, cb) {
-        var ext = path.extname(file.originalname);
-        if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
-            return callback(new Error('Only images are allowed'))
-        }
-
-        const fileSize = file.size / 1024 / 1024; // in MB
-        if (fileSize > 1) {
-            return callback(new Error('File size must be less than 1 MB'))
-        }
-
-        callback(null, true)
-    }
-});
 
 module.exports = function (app) {
     app.use(function (req, res, next) {
@@ -35,15 +12,15 @@ module.exports = function (app) {
         next();
     });
 
-    app.post('/api/user/profile/banner', verifyToken, upload.single('myImage'), updateBanner);
-
-    app.post('/api/user/profile/image', verifyToken, upload.single('myImage'), updateAvatar);
-
-    app.delete('/api/user/profile/banner', verifyToken, deleteBanner);
+    app.post('/api/user/profile/image', verifyToken, multerhelper.createImage, updateAvatar);
+    
+    app.post('/api/user/profile/banner', verifyToken, multerhelper.createImage, updateBanner);
 
     app.delete('/api/user/profile/image', verifyToken, deleteAvatar);
-
-    app.get('/api/user/banner/:userName', getBanner);
-
+    
+    app.delete('/api/user/profile/banner', verifyToken, deleteBanner);
+    
     app.get('/api/user/image/:userName', getAvatar);
+    
+    app.get('/api/user/banner/:userName', getBanner);
 };

@@ -1,7 +1,7 @@
 const User = require("../models/User.model");
 const Category = require("../models/Category.model")
 
-const { textRegex, isEmpty, numberRegex } = require("../Utils/Sanitize.util");
+const { textRegex, isEmpty, sanitizeNumber } = require("../Utils/Sanitize.util");
 
 exports.searchStream = function (req, res, next) {
 
@@ -14,7 +14,7 @@ exports.searchStream = function (req, res, next) {
     }
 
     let query = textRegex(req.query.query);
-    let page = numberRegex(req.query.query);
+    let page = sanitizeNumber(req.query.query);
 
     User.find({
         $or: [
@@ -56,7 +56,7 @@ exports.searchCategory = function (req, res, next) {
     }
 
     let query = textRegex(req.query.query);
-    let page = numberRegex(req.query.query);
+    let page = sanitizeNumber(req.query.query);
 
     Category.find({
         $or: [

@@ -65,8 +65,6 @@ const deleteImage = (fileName, res) => {
     });
 }
 
-export {
-    updateImage,
-    getImage,
-    deleteImage
-}
+exports.updateImage = updateImage;
+exports.getImage = getImage;
+exports.deleteImage = deleteImage;
