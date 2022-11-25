@@ -33,10 +33,6 @@ var upload = multer({
     storage: storage,
     limits: { fileSize: 3_145_728 }, // 3MB
     fileFilter: filefilter,
-    onError: function (err, next) {
-        console.log('error', err);
-        next(err);
-    }
 });
 
 let createImage = upload.single('photo');

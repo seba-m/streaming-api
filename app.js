@@ -7,8 +7,8 @@ var app = express();
 
 app.use(cors());
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({limit: '1kb'}));
+app.use(express.urlencoded({limit: '1kb', extended: true }));
 app.use(cookieParser());
 
 require('./src/routes/user.routes')(app);
@@ -21,18 +21,16 @@ app.get('/', (req, res, next) => {
   res.redirect(process.env.clientUrl);
 });
 
-/*app.use(function (req, res, next) {
+app.use(function (req, res, next) {
   res.redirect(process.env.clientUrl);
-});*/
-
+});
+/*
 var createError = require('http-errors');
 
-// catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -40,9 +38,8 @@ app.use(function (err, req, res, next) {
 
   console.log(err.message)
 
-  // render the error page
   res.status(err.status || 500);
   res.send(`error '${err.status || 500}' `);
-});
+});*/
 
 module.exports = app;

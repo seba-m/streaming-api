@@ -23,7 +23,6 @@ const updateImage = (source, fileName, res) => {
 				}
 				else {
 					fs.unlink(source);
-                    return res.status(200).send("Image uploaded successfully");
 				}
 			});
 		}
@@ -41,7 +40,7 @@ const getImage = (fileName, res) => {
 
 	s3.getObject(getParams, function (err, data) {
 		if (err) {
-            return res.status(400).send("Can't find image");
+            return res.status(404).send("Can't find image");
 		}
 		else {
 			return res.send(data.Body);
@@ -58,9 +57,6 @@ const deleteImage = (fileName, res) => {
     s3.deleteObject(getParams, function (err, data) {
         if (err) {
             return res.status(400).send("Can't delete image");
-        }
-        else {
-            return res.status(200).send("Image deleted successfully");
         }
     });
 }
