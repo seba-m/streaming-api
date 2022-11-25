@@ -2,14 +2,6 @@ const User = require("../models/User.model");
 const { updateImage, getImage, deleteImage } = require("../services/AwsS3.service");
 const { sanitizeText } = require("../Utils/Sanitize.util");
 
-function deleteFile(filePath) {
-    fs.unlink(filePath, function (err) {
-        if (err) {
-            console.error(err);
-        }
-    });
-}
-
 exports.updateBanner = function (req, res) {
     if (!req.file) {
         return res.status(403).send({ message: "No image has been uploaded." });
@@ -111,7 +103,7 @@ exports.deleteAvatar = function (req, res, next) {
 
 exports.getBanner = function (req, res, next) {
     var username = sanitizeText(req.params.userName);
-    User.findById(username, (err, user) => {
+    User.find(username, (err, user) => {
         if (err) {
             return res.status(500).send({ message: "Server error." });
         }
@@ -125,7 +117,7 @@ exports.getBanner = function (req, res, next) {
 
 exports.getAvatar = function (req, res, next) {
     var username = sanitizeText(req.params.userName);
-    User.findById(username, (err, user) => {
+    User.find(username, (err, user) => {
         if (err) {
             return res.status(500).send({ message: "Server error." });
         }
