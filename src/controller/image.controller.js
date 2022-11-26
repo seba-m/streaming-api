@@ -18,7 +18,12 @@ exports.updateBanner = function (req, res) {
 
         var filename = req.file.filename;
         var imagePath = `uploads/user/banner/${filename}`;
-        updateImage(req.file.path, imagePath, res);
+        
+        const error = updateImage(req.file.path, imagePath);
+        
+        if (error) {
+            return res.status(500).send({ message: error });
+        }
 
         user.banner = filename;
         user.save((err) => {
@@ -46,7 +51,12 @@ exports.updateAvatar = function (req, res) {
 
         var filename = req.file.filename;
         var imagePath = `uploads/user/avatar/${filename}`;
-        updateImage(req.file.path, imagePath, res);
+
+        const error = updateImage(req.file.path, imagePath);
+
+        if (error) {
+            return res.status(500).send({ message: error });
+        }
 
         user.avatar = filename;
         user.save((err) => {
@@ -58,7 +68,7 @@ exports.updateAvatar = function (req, res) {
     });
 };
 
-exports.deleteBanner = function (req, res, next) {
+exports.deleteBanner = function (req, res) {
     User.findById(req.userId, (err, user) => {
         if (err) {
             return res.status(500).send({ message: "Server error." });
@@ -80,7 +90,7 @@ exports.deleteBanner = function (req, res, next) {
     });
 }
 
-exports.deleteAvatar = function (req, res, next) {
+exports.deleteAvatar = function (req, res) {
     User.findById(req.userId, (err, user) => {
         if (err) {
             return res.status(500).send({ message: "Server error." });
@@ -101,7 +111,7 @@ exports.deleteAvatar = function (req, res, next) {
     });
 }
 
-exports.getBanner = function (req, res, next) {
+exports.getBanner = function (req, res) {
     var username = sanitizeText(req.params.userName);
     User.find(username, (err, user) => {
         if (err) {
@@ -115,7 +125,7 @@ exports.getBanner = function (req, res, next) {
     });
 }
 
-exports.getAvatar = function (req, res, next) {
+exports.getAvatar = function (req, res) {
     var username = sanitizeText(req.params.userName);
     User.find(username, (err, user) => {
         if (err) {
@@ -125,6 +135,10 @@ exports.getAvatar = function (req, res, next) {
             return res.status(404).send({ message: "User Not found." });
         }
         var imagePath = `uploads/user/avatar/${user.avatar}`;
-        getImage(imagePath, res);
+        const error = getImage(imagePath, res);
+
+        if (error) {
+            return res.status(500).send({ message: error });
+        }
     });
 }

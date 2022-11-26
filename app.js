@@ -21,7 +21,7 @@ app.get('/', (req, res, next) => {
   res.redirect(process.env.clientUrl);
 });
 
-app.use(function (req, res, next) {
+app.use(function (err, req, res, next) {
   res.redirect(process.env.clientUrl);
 });
 /*
