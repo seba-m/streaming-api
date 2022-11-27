@@ -83,12 +83,12 @@ class Rtmp {
             }
         }, { new: true }, (err, user) => {
             if (err) {
-                console.log(err);
+                //console.log(err);
                 return;
             }
 
             if (!user) {
-                console.log("User not found");
+                //console.log("User not found");
                 return;
             }
         });

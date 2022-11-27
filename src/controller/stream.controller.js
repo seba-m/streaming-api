@@ -120,7 +120,6 @@ exports.viewStreamer = function (req, res, next) {
         }
 
         if (!user) {
-            console.log("User not found", user);
             return res.status(404).send("User not found");
         }
 

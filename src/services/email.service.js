@@ -1,5 +1,6 @@
-
 var nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+dotenv.config();
 
 var transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -19,7 +20,7 @@ exports.sendEmail = (email, subject, html) => {
 
     transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
-            console.log(err);
+            //console.log(err);
         }
     });
 }
