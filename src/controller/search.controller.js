@@ -23,7 +23,8 @@ exports.searchStream = function (req, res, next) {
         ]
     }, function (err, streamers) {
         if (err) {
-            res.send(err);
+            res.status(500).json({ message: "Server error." });
+            return;
         }
 
         res.send(JSON.stringify(
@@ -65,7 +66,8 @@ exports.searchCategory = function (req, res, next) {
         ]
     }, function (err, categories) {
         if (err) {
-            res.send(err);
+            res.status(500).json({ message: "Server error." });
+            return;
         }
 
         res.send(JSON.stringify(

@@ -15,7 +15,7 @@ exports.follow = function (req, res, next) {
         },
         function (err, user) {
             if (err) {
-                return res.status(404).send({ message: "Server error." });
+                return res.status(404).json({ message: "Server error." });
             }
 
             if (!user) {
@@ -34,7 +34,7 @@ exports.follow = function (req, res, next) {
                 },
                 function (err, user) {
                     if (err) {
-                        return res.status(404).send({ message: "Server error." });
+                        return res.status(404).json({ message: "Server error." });
                     }
 
                     if (!user) {
@@ -60,7 +60,7 @@ exports.unfollow = function (req, res, next) {
         },
         function (err, user) {
             if (err) {
-                return res.status(404).send({ message: "Server error." });
+                return res.status(404).json({ message: "Server error." });
             }
 
             if (!user) {
@@ -79,7 +79,7 @@ exports.unfollow = function (req, res, next) {
                 },
                 function (err, user) {
                     if (err) {
-                        return res.status(404).send({ message: "Server error." });
+                        return res.status(404).json({ message: "Server error." });
                     }
 
                     if (!user) {
@@ -100,7 +100,7 @@ exports.following = function (req, res, next) {
 
     User.findById({ _id: currentUser }, function (err, user) {
         if (err) {
-            return res.status(404).send({ message: "Server error." });
+            return res.status(404).json({ message: "Server error." });
         }
 
         if (!user) {
@@ -116,7 +116,7 @@ exports.viewStreamer = function (req, res, next) {
 
     User.findOne({ userName: username }, function (err, user) {
         if (err) {
-            return res.status(404).send({ message: "Server error." });
+            return res.status(404).json({ message: "Server error." });
         }
 
         if (!user) {
@@ -157,7 +157,7 @@ exports.viewStreamer = function (req, res, next) {
 exports.topStreamers = function (req, res, next) {
     /*User.aggregate([{ $sample: { size: 10 } }], function (err, users) {
         if (err) {
-            return res.status(404).send({ message: "Server error." });
+            return res.status(404).json({ message: "Server error." });
         }
 
         if (!users) {

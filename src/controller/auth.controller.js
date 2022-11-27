@@ -21,12 +21,12 @@ exports.checkDuplicate = (req, res, next) => {
 		]
 	}).exec((err, user) => {
 		if (err) {
-			res.status(500).send({ message: "Server error." });
+			res.status(500).json({ message: "Server error." });
 			return;
 		}
 
 		if (user) {
-			res.status(400).send({ message: "Failed! Username or Email is already in use!" });
+			res.status(400).json({ message: "Failed! Username or Email is already in use!" });
 			return;
 		}
 
@@ -39,18 +39,18 @@ exports.activateAccount = function (req, res) {
 	let key = req.params.key;
 
 	if (!key) {
-		return res.status(400).send({ message: "Failed! Invalid key!" });
+		return res.status(400).json({ message: "Failed! Invalid key!" });
 	}
 
 	User.findOne({
 		"activation.key": key
 	}).exec((err, user) => {
 		if (err) {
-			return res.status(500).send({ message: "Server error." + key });
+			return res.status(500).json({ message: "Server error." + key });
 		}
 
 		if (!user) {
-			return res.status(400).send({ message: "Failed! Invalid key!" });
+			return res.status(400).json({ message: "Failed! Invalid key!" });
 		}
 
 		user.activation.key = "";
@@ -58,7 +58,7 @@ exports.activateAccount = function (req, res) {
 
 		user.save((err) => {
 			if (err) {
-				return res.status(500).send({ message: "Server error." });
+				return res.status(500).json({ message: "Server error." });
 			}
 			let loginUrl = process.env.clientUrl + "/login";
 			res.redirect(loginUrl);
@@ -88,7 +88,7 @@ exports.signup = (req, res) => {
 	user.save((err, user) => {
 		if (err) {
 			console.log(err);
-			res.status(500).send({ message: "Server error." });
+			res.status(500).json({ message: "Server error." });
 			return;
 		}
 		sendEmail(user.email, 
@@ -100,7 +100,7 @@ exports.signup = (req, res) => {
 				<p>Cheers</p>
 				<p>uStream Team</p>
 			`);
-		res.send({ message: "User was registered successfully!" });
+		res.json({ message: "User was registered successfully!" });
 	});
 };
 
@@ -114,12 +114,12 @@ exports.signin = (req, res) => {
 	})
 		.exec((err, user) => {
 			if (err) {
-				res.status(500).send({ message: "Server error." });
+				res.status(500).json({ message: "Server error." });
 				return;
 			}
 
 			if (!user) {
-				return res.status(404).send({ message: "User Not found." });
+				return res.status(404).json({ message: "User Not found." });
 			}
 
 			var passwordIsValid = bcrypt.compareSync(
@@ -163,25 +163,25 @@ exports.resetPassword = (req, res) => {
 		email: req.body.email
 	}).exec((err, user) => {
 		if (err) {
-			return res.status(500).send({ message: "Server error." });
+			return res.status(500).json({ message: "Server error." });
 		}
 
 		if (!user) {
-			return res.status(400).send({ message: "Failed! Invalid email!" });
+			return res.status(400).json({ message: "Failed! Invalid email!" });
 		}
 
 		if (user.activation.key != key) {
-			return res.status(400).send({ message: "Failed! Invalid key!" });
+			return res.status(400).json({ message: "Failed! Invalid key!" });
 		}
 
 		user.password = bcrypt.hashSync(password, 8);
 		user.activation.key = "";
 		user.save((err) => {
 			if (err) {
-				return res.status(500).send({ message: "Server error." });
+				return res.status(500).json({ message: "Server error." });
 			}
 
-			return res.status(200).send({ message: "Password changed!" });
+			return res.status(200).json({ message: "Password changed!" });
 		}
 		);
 	});
@@ -190,11 +190,11 @@ exports.resetPassword = (req, res) => {
 exports.recoverPassword = function (req, res) {
 	User.findOne({ email: req.body.email }, function (err, user) {
 		if (err) {
-			return res.status(500).send({ message: "Server error." });
+			return res.status(500).json({ message: "Server error." });
 		}
 
 		if (!user) {
-			return res.status(200).send({ message: "Email sent" });
+			return res.status(200).json({ message: "Email sent" });
 		}
 
 		user.resetPasswordToken = randomKey(64);
@@ -208,6 +208,6 @@ exports.recoverPassword = function (req, res) {
 				<p>Cheers</p>
 				<p>uStream Team</p>
 			`);
-		return res.status(200).send({ message: "Email sent" });
+		return res.status(200).json({ message: "Email sent" });
 	});
 };

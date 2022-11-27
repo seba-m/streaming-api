@@ -9,14 +9,6 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-function deleteFile(filePath) {
-	fs.unlink(filePath, function (err) {
-		if (err) {
-			console.error(err);
-		}
-	});
-}
-
 const updateImage = (source, fileName) => {
 	var error = null;
 
@@ -34,11 +26,10 @@ const updateImage = (source, fileName) => {
 
 		s3.putObject(putParams, function (err, data) {
 			if (err) {
-				error.file = "Can't upload image";
+				console.log(err)
+				error = "Can't upload image";
 				return;
 			}
-
-			deleteFile(source);
 		});
 	});
 
