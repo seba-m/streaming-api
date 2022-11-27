@@ -1,12 +1,12 @@
-const User = require("../models/User.model");
-
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+const { scryptSync, randomBytes } = require("crypto");
+
+const User = require("../models/User.model");
 
 const { sendEmail } = require("../services/email.service");
 
 function randomKey(length) {
-	const { scryptSync, randomBytes } = require("crypto");
 	const salt = randomBytes(64).toString("hex")
 	const getHash = (password) => scryptSync(password, salt, length).toString("hex");
 
