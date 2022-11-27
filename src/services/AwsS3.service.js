@@ -9,13 +9,10 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-const updateImage = (source, fileName) => {
-	var error = null;
-
+const uploadImage = (source, fileName) => {
 	fs.readFile(source, function (err, fileData) {
 		if (err) {
-			error = 'File not found';
-			return;
+			return "File not found";
 		}
 
 		const putParams = {
@@ -26,17 +23,14 @@ const updateImage = (source, fileName) => {
 
 		s3.putObject(putParams, function (err, data) {
 			if (err) {
-				console.log(err)
-				error = "Can't upload image";
-				return;
+				return "Can't upload image";
 			}
 		});
 	});
-
-	return error;
 }
 
-const getImage = (fileName, res) => {
+const getImage = (fileName) => {
+
 	const getParams = {
 		Bucket: process.env.AWS_BUCKET_NAME,
 		Key: fileName
@@ -44,16 +38,14 @@ const getImage = (fileName, res) => {
 
 	s3.getObject(getParams, function (err, data) {
 		if (err) {
-			return res.status(404).send("Can't find image");
+			return ["Can't find image", null];
 		}
 		
-		return res.send(data.Body);
+		return [null, data.Body];
 	});
 }
 
-const deleteImage = (fileName, res) => {
-	var error = null;
-
+const deleteImage = (fileName) => {
 	const getParams = {
 		Bucket: process.env.AWS_BUCKET_NAME,
 		Key: fileName
@@ -61,13 +53,11 @@ const deleteImage = (fileName, res) => {
 
 	s3.deleteObject(getParams, function (err, data) {
 		if (err) {
-			error = "Can't delete image";
+			return "Can't delete image";
 		}
 	});
-	
-	return error;
 }
 
-exports.updateImage = updateImage;
+exports.uploadImage = uploadImage;
 exports.getImage = getImage;
 exports.deleteImage = deleteImage;

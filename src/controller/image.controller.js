@@ -1,6 +1,6 @@
 const User = require("../models/User.model");
-const { updateImage, getImage, deleteImage } = require("../services/AwsS3.service");
-const { sanitizeText } = require("../Utils/Sanitize.util");
+const { uploadImage, getImage, deleteImage } = require("../services/AwsS3.service");
+const { sanitizeText, isEmpty } = require("../Utils/Sanitize.util");
 
 const fs = require('fs');
 
@@ -22,15 +22,15 @@ exports.updateBanner = function (req, res) {
             return res.status(404).json({ message: "User Not found." });
         }
 
-        var filename = req.file.filename;
+        var filename = !isEmpty(user.banner) ? user.banner : req.file.filename;
         var imagePath = `uploads/user/banner/${filename}`;
         
-        const error = updateImage(req.file.path, imagePath);
+        const error = uploadImage(req.file.path, imagePath);
 
         deleteFile(req.file.path);
         
         if (error) {
-            return res.status(500).json({ message: error });
+            return res.status(500).json({ message: "Server error." });
         }
 
         user.banner = filename;
@@ -57,10 +57,10 @@ exports.updateAvatar = function (req, res) {
             return res.status(404).json({ message: "User Not found." });
         }
 
-        var filename = req.file.filename;
+        var filename = !isEmpty(user.avatar) ? user.avatar : req.file.filename;
         var imagePath = `uploads/user/avatar/${filename}`;
 
-        const error = updateImage(req.file.path, imagePath);
+        const error = uploadImage(req.file.path, imagePath);
 
         deleteFile(req.file.path);
 
@@ -88,7 +88,11 @@ exports.deleteBanner = function (req, res) {
         }
 
         var imagePath = `uploads/user/banner/${user.banner}`;
-        deleteImage(imagePath, res);
+        const error = deleteImage(imagePath);
+
+        if (error) {
+            return res.status(500).json({ message: error });
+        }
 
         user.banner = null;
         user.save((err) => {
@@ -109,7 +113,11 @@ exports.deleteAvatar = function (req, res) {
             return res.status(404).json({ message: "User Not found." });
         }
         var imagePath = `uploads/user/avatar/${user.userName}`;
-        deleteImage(imagePath, res);
+        const error = deleteImage(imagePath);
+
+        if (error) {
+            return res.status(500).json({ message: error });
+        }
 
         user.avatar = null;
         user.save((err) => {
@@ -145,10 +153,12 @@ exports.getAvatar = function (req, res) {
             return res.status(404).json({ message: "User Not found." });
         }
         var imagePath = `uploads/user/avatar/${user.avatar}`;
-        const error = getImage(imagePath, res);
+        const [error, data] = getImage(imagePath);
 
         if (error) {
             return res.status(500).json({ message: error });
         }
+
+        return res.status(200).send(data);
     });
 }
