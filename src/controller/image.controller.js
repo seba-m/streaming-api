@@ -130,8 +130,13 @@ exports.deleteAvatar = function (req, res) {
 }
 
 exports.getBanner = function (req, res) {
+    
+    if (isEmpty(req.params.userName)){
+        return res.status(404).json({ message: "Invalid User Name." });
+    }
+
     var username = sanitizeText(req.params.userName);
-    User.find(username, (err, user) => {
+    User.findOne({ userName: username }, (err, user) => {
         if (err) {
             return res.status(500).json({ message: "Server error." });
         }
@@ -144,8 +149,13 @@ exports.getBanner = function (req, res) {
 }
 
 exports.getAvatar = function (req, res) {
+
+    if (isEmpty(req.params.userName)){
+        return res.status(404).json({ message: "Invalid User Name." });
+    }
+
     var username = sanitizeText(req.params.userName);
-    User.find(username, (err, user) => {
+    User.findOne({ userName: username }, (err, user) => {
         if (err) {
             return res.status(500).json({ message: "Server error." });
         }
@@ -153,12 +163,6 @@ exports.getAvatar = function (req, res) {
             return res.status(404).json({ message: "User Not found." });
         }
         var imagePath = `uploads/user/avatar/${user.avatar}`;
-        const [error, data] = getImage(imagePath);
-
-        if (error) {
-            return res.status(500).json({ message: error });
-        }
-
-        return res.status(200).send(data);
+        getImage(imagePath, res);
     });
 }

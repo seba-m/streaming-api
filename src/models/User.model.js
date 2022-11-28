@@ -114,6 +114,14 @@ var userSchema = new Schema({
                 return `It Was Me, ${this.userName}!`;
             },
         },
+        color: {
+            type: String,
+            default: "#2ec5ce",
+            validate: [
+                (v) => (/^#([0-9a-f]{3}){1,2}$/i).test(v),
+                "Invalid color hex.",
+            ],
+        },
         _category: {
             type: Schema.Types.ObjectId,
             ref: "Category",

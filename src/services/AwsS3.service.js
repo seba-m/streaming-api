@@ -29,20 +29,30 @@ const uploadImage = (source, fileName) => {
 	});
 }
 
-const getImage = (fileName) => {
+const getImage = (fileName, res) => {
 
 	const getParams = {
 		Bucket: process.env.AWS_BUCKET_NAME,
-		Key: fileName
+		Key: fileName,
+		Expires: 900
 	};
 
-	s3.getObject(getParams, function (err, data) {
+	s3.getSignedUrl("getObject", getParams, function (err, url) {
 		if (err) {
-			return ["Can't find image", null];
+			return res.status(500).json({ message: "Can't find image." });
 		}
-		
-		return [null, data.Body];
-	});
+      	return res.status(200).send({data: url});  
+	})
+
+	/*s3.getObject(getParams, function (err, data) {
+		if (err) {
+			return res.status(500).json({ message: "Can't find image." });
+		}
+
+		res.attachment(fileName);
+      	res.type(data.ContentType); 
+      	return res.send(data.Body);  
+	});*/
 }
 
 const deleteImage = (fileName) => {
