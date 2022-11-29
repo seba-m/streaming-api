@@ -21,7 +21,9 @@ module.exports = function (app) {
                 .withMessage('Username must be between 3 and 20 characters'),
             body('email')
                 .isEmail()
-                .normalizeEmail(),
+                .normalizeEmail({
+                    gmail_remove_dots: false
+                }),
             body('password')
                 .isLength({ min: 6, max: 40 })
                 .withMessage('Password must be between 6 and 40 characters')

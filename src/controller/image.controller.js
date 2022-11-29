@@ -143,6 +143,11 @@ exports.getBanner = function (req, res) {
         if (!user) {
             return res.status(404).json({ message: "User Not found." });
         }
+        
+        if (!user.avatar){
+            return res.status(404).json({ message: "User don't have banner." });
+        }
+
         var imagePath = `uploads/user/banner/${user.banner}`;
         getImage(imagePath, res);
     });
@@ -162,6 +167,11 @@ exports.getAvatar = function (req, res) {
         if (!user) {
             return res.status(404).json({ message: "User Not found." });
         }
+
+        if (!user.avatar){
+            return res.status(404).json({ message: "User don't have avatar." });
+        }
+
         var imagePath = `uploads/user/avatar/${user.avatar}`;
         getImage(imagePath, res);
     });
