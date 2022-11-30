@@ -1,6 +1,8 @@
 var bcrypt = require("bcryptjs");
 const User = require('../models/User.model');
 
+const { sanitizeText, isEmpty } = require("../Utils/Sanitize.util");
+
 exports.profile = (req, res, next) => {
     User.findById(req.userId, { password: 0 }, (err, user) => {
         if (err) {

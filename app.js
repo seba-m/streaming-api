@@ -21,10 +21,11 @@ app.get('/', (req, res, next) => {
   res.redirect(process.env.clientUrl);
 });
 
-/*app.use(function (err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.redirect(process.env.clientUrl);
 });
-*/
+
+/*
 var createError = require('http-errors');
 
 app.use(function (req, res, next) {
@@ -40,6 +41,6 @@ app.use(function (err, req, res, next) {
 
   res.status(err.status || 500);
   res.json(`error '${err.status || 500}' `);
-});
+});*/
 
 module.exports = app;

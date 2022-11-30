@@ -52,7 +52,9 @@ module.exports = function (app) {
         [
             body('email')
                 .isEmail()
-                .normalizeEmail()
+                .normalizeEmail({
+                    gmail_remove_dots: false
+                }),
         ],
         recoverPassword
     );

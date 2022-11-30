@@ -156,11 +156,12 @@ exports.signin = (req, res) => {
 };
 
 exports.resetPassword = (req, res) => {
-	let key = req.params.key;
+	let key = req.body.key;
 	let password = req.body.password;
+	let email = req.body.email;
 
 	User.findOne({
-		email: req.body.email
+		email: email
 	}).exec((err, user) => {
 		if (err) {
 			return res.status(500).json({ message: "Server error." });
@@ -170,12 +171,12 @@ exports.resetPassword = (req, res) => {
 			return res.status(400).json({ message: "Failed! Invalid email!" });
 		}
 
-		if (user.activation.key != key) {
+		if (user.resetPassword.key != key || user.resetPassword.expires.getTime() > Date.now()) {
 			return res.status(400).json({ message: "Failed! Invalid key!" });
 		}
 
 		user.password = bcrypt.hashSync(password, 8);
-		user.activation.key = "";
+		user.resetPassword.key = "";
 		user.save((err) => {
 			if (err) {
 				return res.status(500).json({ message: "Server error." });
@@ -194,7 +195,7 @@ exports.recoverPassword = function (req, res) {
 		}
 
 		if (!user) {
-			return res.status(200).json({ message: "Email sent" });
+			return res.status(400).json({ message: "Failed! Invalid email!" });
 		}
 
 		user.resetPasswordToken = randomKey(64);
@@ -204,7 +205,7 @@ exports.recoverPassword = function (req, res) {
 			"uStream - Password Recovery", 
 			`
 				<h3> Hello ${user.userName} </h3>
-				<p>It seems that you have forgotten your password. No worries, we got you covered! Just follow this link to reset your password: <a target="_" href="${process.env.apiUrl}/api/auth/reset/${user.activation.key}?key=${user.resetPasswordToken}">${process.env.apiUrl}/reset </a></p>
+				<p>It seems that you have forgotten your password. No worries, we got you covered! Just follow this link to reset your password: <a target="_" href="${process.env.clientUrl}/reset/${user.resetPasswordToken}">${process.env.clientUrl}/reset </a></p>
 				<p>Cheers</p>
 				<p>uStream Team</p>
 			`);
