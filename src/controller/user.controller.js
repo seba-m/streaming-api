@@ -35,9 +35,9 @@ exports.updateProfile = (req, res, next) => {
         if (!user) {
             return res.status(404).json({ message: "User Not found." });
         }
-
-        if (!isEmpty(req.body.publicName) && user.userName.toLowerCase() === req.body.publicName.toLowerCase()) {
-            user.streamData.name = req.body.publicName;
+        
+        if (!isEmpty(req.body.name) && user.userName.toLowerCase() === req.body.name.toLowerCase()) {
+            user.streamData.name = req.body.name;
         }
         user.about = req.body.about;
         user.updated_at = Date.now();

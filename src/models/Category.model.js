@@ -16,19 +16,17 @@ var categorySchema = new Schema({
         required: true,
         unique: true
     },
+    cover: {
+        type: String,
+    },
     spectators: {
         type: Number,
         default: 0
     },
     tags: [{
         type: [{
-            type: String,
-            maxlength: 10
+            type: String
         }],
-        validate: [(val) => {
-            return val.length <= 5;
-        },
-            'Tags exceeds the limit of 5'],
         default: []
     }],
 });
