@@ -91,6 +91,7 @@ exports.searchCategory = function (req, res, next) {
                         name: category.name,
                         tags: category.tags,
                         spectators: category.spectators,
+                        cover: category.cover,
                     };
                 }),
                 totalPages: data.totalPages,
