@@ -1,11 +1,11 @@
 const User = require("../models/User.model");
 const Category = require("../models/Category.model")
 
-const { textRegex, isEmpty, sanitizeNumber } = require("../Utils/Sanitize.util");
+const { textRegex, isEmpty } = require("../Utils/Sanitize.util");
 
 exports.searchStream = function (req, res, next) {
 
-    if (isEmpty(req.query?.query) || isEmpty(req.query?.page)) {
+    if (isEmpty(req.query?.query)) {
         return res.send(JSON.stringify(
             {
                 streams: []
@@ -14,14 +14,20 @@ exports.searchStream = function (req, res, next) {
     }
 
     let query = textRegex(req.query.query);
-    let page = sanitizeNumber(req.query.query);
+    let page = req.query.page || 1; //default page 1
+    let limit = req.query.limit || 10; //default result limit 10
 
-    User.find({
+    User.paginate({
         $or: [
             { userName: query },
             { "streamData.tags": query }
         ]
-    }, function (err, streamers) {
+    },
+    {
+        page: page,
+        limit: limit,
+    }, 
+    function (err, data) {
         if (err) {
             res.status(500).json({ message: "Server error." });
             return;
@@ -29,9 +35,9 @@ exports.searchStream = function (req, res, next) {
 
         res.send(JSON.stringify(
             {
-                streams: streamers.map((streamer) => {
+                streams: data.docs.map((streamer) => {
                     return {
-                        username: streamer.userName,
+                        username: streamer.streamData.name,
                         followers: streamer.followers,
                         about: streamer.about,
                         category: streamer.streamData.category,
@@ -40,7 +46,9 @@ exports.searchStream = function (req, res, next) {
                         tags: streamer.streamData.tags,
                         islive: streamer.streamData.isLive,
                     };
-                })
+                }),
+                totalPages: data.totalPages,
+                currentPage: data.page - 1,
             }
         ));
     });
@@ -48,7 +56,7 @@ exports.searchStream = function (req, res, next) {
 
 exports.searchCategory = function (req, res, next) {
 
-    if (isEmpty(req.query?.query) || isEmpty(req.query?.page)) {
+    if (isEmpty(req.query?.query)) {
         return res.send(JSON.stringify(
             {
                 categories: []
@@ -57,14 +65,20 @@ exports.searchCategory = function (req, res, next) {
     }
 
     let query = textRegex(req.query.query);
-    let page = sanitizeNumber(req.query.query);
+    let page = req.query.page || 1; //default page 1
+    let limit = req.query.limit || 10; //default result limit 10
 
-    Category.find({
+    Category.paginate({
         $or: [
             { name: query },
             { tags: query }
         ]
-    }, function (err, categories) {
+    },
+    {
+        page: page,
+        limit: limit,
+    }, 
+    function (err, data) {
         if (err) {
             res.status(500).json({ message: "Server error." });
             return;
@@ -72,13 +86,15 @@ exports.searchCategory = function (req, res, next) {
 
         res.send(JSON.stringify(
             {
-                categories: categories.map((category) => {
+                categories: data.docs.map((category) => {
                     return {
                         name: category.name,
                         tags: category.tags,
                         spectators: category.spectators,
                     };
-                })
+                }),
+                totalPages: data.totalPages,
+                currentPage: data.page - 1,
             }
         ));
     });

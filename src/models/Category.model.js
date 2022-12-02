@@ -5,12 +5,6 @@ const mongooseUniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
 var categorySchema = new Schema({
-    _id: {
-        type: String,
-        default: function () {
-            return this.name.split(' ').join('_');
-        },
-    },
     name: {
         type: String,
         required: true,
