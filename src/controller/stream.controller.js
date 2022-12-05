@@ -1,6 +1,6 @@
 const User = require("../models/User.model");
 
-const { sanitizeText, textRegex } = require("../Utils/Sanitize.util");
+const { sanitizeText } = require("../Utils/Sanitize.util");
 
 exports.follow = function (req, res, next) {
     let username = sanitizeText(req.body.username);

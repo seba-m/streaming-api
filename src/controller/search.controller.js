@@ -94,8 +94,8 @@ exports.searchCategory = function (req, res, next) {
                         cover: category.cover,
                     };
                 }),
-                totalPages: data.totalPages,
-                currentPage: data.page - 1,
+                totalPages: data.pages,
+                currentPage: data.page,
             }
         ));
     });

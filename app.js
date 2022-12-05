@@ -25,6 +25,21 @@ app.use(function (err, req, res, next) {
   res.redirect(process.env.clientUrl);
 });
 
+app.use(function(req, res, next) {
+  var err = null;
+  try {
+      decodeURIComponent(req.path)
+  }
+  catch(e) {
+      err = e;
+  }
+  if (err){
+      console.log(err.message, req.url);
+      return res.redirect(process.env.clientUrl);    
+  }
+  next();
+});
+
 /*
 var createError = require('http-errors');
 

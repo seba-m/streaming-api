@@ -7,7 +7,7 @@ module.exports = function (app) {
         query('query')
             .not().isEmpty()
             .withMessage('You must provide a word to search.')
-            .whitelist('[a-zA-Z0-9]')
+            .escape()
             .isLength({ min: 1, max: 40 })
             .withMessage('Query must be between 1 and 40 characters.'),
         query('page')
@@ -22,7 +22,7 @@ module.exports = function (app) {
         query('query')
             .not().isEmpty()
             .withMessage('You must provide a word to search.')
-            .whitelist('[a-zA-Z0-9]')
+            .escape()
             .isLength({ min: 1, max: 40 })
             .withMessage('Query must be between 1 and 40 characters.'),
         query('page')

@@ -1,4 +1,5 @@
 var bcrypt = require("bcryptjs");
+const { scryptSync, randomBytes } = require("crypto");
 const User = require('../models/User.model');
 
 const { sanitizeText, isEmpty } = require("../Utils/Sanitize.util");

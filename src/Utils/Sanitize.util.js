@@ -3,8 +3,7 @@ const sanitizeText = (string) => {
 };
 
 const textRegex = (name) => {
-    let username = sanitizeText(name);
-    return new RegExp(`\\b\\w*${username}\\w*\\b`, "gi");
+    return new RegExp(`\\b\\w*${name}\\w*\\b`, "gi");
 }
 
 const isEmpty = (string) => {
