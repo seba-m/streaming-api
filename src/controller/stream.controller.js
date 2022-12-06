@@ -154,48 +154,49 @@ exports.viewStreamer = function (req, res, next) {
       }));*/
 };
 
-exports.topStreamers = function (req, res, next) {
-
-    let category = [];
-    let stream = [];
-
-    User.aggregate([{ $sample: { size: 10 } }], function (err, users) {
+exports.topCategories = function (req, res, next) {
+    Category.aggregate([{ $sample: { size: 10 } }], function (err, data) {
         if (err) {
             return res.status(404).json({ message: "Server error." });
         }
 
-        if (!users) {
+        if (!data) {
+            return res.status(404).send("Categories not found");
+        }
+
+        let categories = [];
+
+        data.forEach((category) => {
+            categories.push({
+                name: category.name,
+                cover: category.cover
+            });
+        });
+
+        return res.status(200).send(JSON.stringify(categories));
+    });     
+};
+
+exports.topStreamers = function (req, res, next) {
+    User.aggregate([{ $sample: { size: 10 } }], function (err, data) {
+        if (err) {
+            return res.status(404).json({ message: "Server error." });
+        }
+
+        if (!data) {
             return res.status(404).send("Users not found");
         }
 
-        users.forEach((user) => {
-            stream.push({
+        let streamers = [];
+
+        data.forEach((user) => {
+            streamers.push({
                 username: user.userName,
                 avatar: user.avatar,
                 banner: user.banner,
             });
         });
+
+        return res.status(200).send(JSON.stringify(streamers));
     });
-
-    Category.aggregate([{ $sample: { size: 10 } }], function (err, categories) {
-        if (err) {
-            return res.status(404).json({ message: "Server error." });
-        }
-
-        if (!categories) {
-            return res.status(404).send("Categories not found");
-        }
-
-        categories.forEach((category) => {
-            category.push({
-                name: category.name,
-                cover: category.cover
-            });
-        });
-    });     
-
-    return res.status(200).send(JSON.stringify({ 
-        streams: stream, 
-        categories: category 
-    }));
 };

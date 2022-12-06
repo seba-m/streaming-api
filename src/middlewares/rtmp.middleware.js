@@ -70,10 +70,8 @@ class Rtmp {
         return regexstring.test(url);
     }
 
-    async #existsStreamKey(key) {
-        const user = await User.findOne({ key: key });
-
-        return user ? true : false;
+    async #getUser(key) {
+        return await User.findOne({ key: key });
     }
 
     #toggleIsLiveStream(key, isLive) {
@@ -123,12 +121,16 @@ class Rtmp {
 
         this.server.on('prePublish', (id, StreamPath, args) => {
             //console.log('\n[4 NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-            let streamKey = StreamPath.split('/')[2];
-            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(streamKey))
+            if (!this.#validStreamUrl(StreamPath))
                 this.#rejectStream(id);
-            else
-                this.#toggleIsLiveStream(streamKey, true);
 
+            let streamKey = StreamPath.split('/')[2];
+            const { streamData } = this.#getUser(streamKey);
+
+            if (!streamData?.isLive)
+                this.#rejectStream(id);
+
+            this.#toggleIsLiveStream(streamKey, true);
         });
 
         this.server.on('postPublish', (id, StreamPath, args) => {
@@ -137,18 +139,31 @@ class Rtmp {
 
         this.server.on('donePublish', (id, StreamPath, args) => {
             //console.log('\n[6 NodeEvent on donePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-            let streamKey = StreamPath.split('/')[2];
-            if (!this.#validStreamUrl(StreamPath) || !this.#existsStreamKey(streamKey))
+            if (!this.#validStreamUrl(StreamPath))
                 this.#rejectStream(id);
-            else
-                this.#toggleIsLiveStream(streamKey, false);
+
+            let streamKey = StreamPath.split('/')[2];
+            const { streamData } = this.#getUser(streamKey);
+
+            if (!streamData?.isLive)
+                this.#rejectStream(id);
+
+            this.#toggleIsLiveStream(streamKey, false);
         });
 
         this.server.on('prePlay', (id, StreamPath, args) => {
             //console.log('\n[7 NodeEvent on prePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
             /*let session = this.server.getSession(id);
             session.reject();*/
+            if (!this.#validStreamUrl(StreamPath))
+                this.#rejectStream(id);
+
             let streamKey = StreamPath.split('/')[2];
+            const { streamData } = this.#getUser(streamKey);
+
+            if (!streamData?.isLive)
+                this.#rejectStream(id);
+
             this.#modifyViewerCount(streamKey, 1);
         });
 
@@ -158,7 +173,15 @@ class Rtmp {
 
         this.server.on('donePlay', (id, StreamPath, args) => {
             //console.log('\n[9 NodeEvent on donePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
+            if (!this.#validStreamUrl(StreamPath))
+                this.#rejectStream(id);
+
             let streamKey = StreamPath.split('/')[2];
+            const { streamData } = this.#getUser(streamKey);
+
+            if (!streamData?.isLive)
+                this.#rejectStream(id);
+
             this.#modifyViewerCount(streamKey, -1);
         });
     }
