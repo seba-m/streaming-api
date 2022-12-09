@@ -13,16 +13,18 @@ exports.searchStream = function (req, res, next) {
         ));
     }
 
-    let query = textRegex(req.query.query);
+    let textToSearch = textRegex(req.query.query);
     let page = req.query.page || 1; //default page 1
     let limit = req.query.limit || 10; //default result limit 10
+    let isTag = req.query.tag || false;
 
-    User.paginate({
-        $or: [
-            { userName: query },
-            { "streamData.tags": query }
-        ]
-    },
+    const query = 
+        isTag ? 
+            { tags: textToSearch } : 
+            { username: textToSearch };
+
+    User.paginate(
+        query,
     {
         page: page,
         limit: limit,
@@ -64,25 +66,27 @@ exports.searchCategory = function (req, res, next) {
         ));
     }
 
-    let query = textRegex(req.query.query);
+    let textToSearch = textRegex(req.query.query);
     let page = req.query.page || 1; //default page 1
     let limit = req.query.limit || 10; //default result limit 10
+    let isTag = req.query.tag || false;
 
-    Category.paginate({
-        $or: [
-            { name: query },
-            { tags: query }
-        ]
-    },
-    {
-        page: page,
-        limit: limit,
-    }, 
-    function (err, data) {
-        if (err) {
-            res.status(500).json({ message: "Server error." });
-            return;
-        }
+    const query =
+        isTag ?
+            { tags: textToSearch } :
+            { name: textToSearch };
+
+    Category.paginate(
+        query,
+        {
+            page: page,
+            limit: limit,
+        },
+        function (err, data) {
+            if (err) {
+                res.status(500).json({ message: "Server error." });
+                return;
+            }
 
         res.send(JSON.stringify(
             {
