@@ -8,41 +8,43 @@ const { query } = require('express-validator');
 module.exports = function (app) {
     app.get('/api/search/stream', [
         query('query')
-            .not().isEmpty()
-            .withMessage('You must provide a word to search.')
-            .escape()
-            .isLength({ min: 1, max: 60 })
-            .withMessage('Query must be between 1 and 60 characters.'),
+            .trim()
+            .escape(),
         query('page')
+            .trim()
             .escape()
             .whitelist('[0-9]')
             .toInt(),
         query('limit')
+            .trim()
             .escape()
             .whitelist('[0-9]')
             .toInt(),
         query('tag')
+            .trim()
             .escape()
-            .isLength({ max: 60 })
-            .withMessage('Query must have max 60 characters.')
+            .isBoolean()
+            .withMessage('Query must be a boolean value.')
+            .toBoolean(true)
     ], searchStream);
 
     app.get('/api/search/category', [
         query('query')
-            .not().isEmpty()
-            .withMessage('You must provide a word to search.')
-            .escape()
-            .isLength({ min: 1, max: 60 })
-            .withMessage('Query must be between 1 and 60 characters.'),
+            .trim()
+            .escape(),
         query('page')
+            .trim()
             .escape()
             .whitelist('[0-9]')
             .toInt(),
         query('limit')
+            .trim()
             .escape()
             .whitelist('[0-9]')
             .toInt(),
         query('tag')
+            .trim()
+            .escape()
             .isBoolean()
             .withMessage('Query must be a boolean value.')
             .toBoolean(true)
