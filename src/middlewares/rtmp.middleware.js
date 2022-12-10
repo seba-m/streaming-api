@@ -105,40 +105,21 @@ class Rtmp {
     }
 
     #configureStream() {
-        /*this.server.on('preConnect', (id, args) => {
-            // console.log('\n[1 NodeEvent on preConnect]', `id=${id} args=${JSON.stringify(args)}\n`);
-            // let session = this.server.getSession(id);
-            // session.reject();
-        });
-
-        this.server.on('postConnect', (id, args) => {
-            // console.log('\n[2 NodeEvent on postConnect]', `id=${id} args=${JSON.stringify(args)}\n`);
-        });
-
-        this.server.on('doneConnect', (id, args) => {
-            // console.log('\n[3 NodeEvent on doneConnect]', `id=${id} args=${JSON.stringify(args)}\n`);
-        });*/
 
         this.server.on('prePublish', (id, StreamPath, args) => {
-            //console.log('\n[4 NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
             if (!this.#validStreamUrl(StreamPath))
                 this.#rejectStream(id);
 
             let streamKey = StreamPath.split('/')[2];
             const { streamData } = this.#getUser(streamKey);
 
-            if (!streamData?.isLive)
+            if (streamData?.isLive)
                 this.#rejectStream(id);
 
             this.#toggleIsLiveStream(streamKey, true);
         });
 
-        this.server.on('postPublish', (id, StreamPath, args) => {
-            //console.log('\n[5 NodeEvent on postPublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-        });
-
         this.server.on('donePublish', (id, StreamPath, args) => {
-            //console.log('\n[6 NodeEvent on donePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
             if (!this.#validStreamUrl(StreamPath))
                 this.#rejectStream(id);
 
@@ -152,36 +133,18 @@ class Rtmp {
         });
 
         this.server.on('prePlay', (id, StreamPath, args) => {
-            //console.log('\n[7 NodeEvent on prePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-            /*let session = this.server.getSession(id);
-            session.reject();*/
             if (!this.#validStreamUrl(StreamPath))
                 this.#rejectStream(id);
 
             let streamKey = StreamPath.split('/')[2];
-            const { streamData } = this.#getUser(streamKey);
-
-            if (!streamData?.isLive)
-                this.#rejectStream(id);
-
             this.#modifyViewerCount(streamKey, 1);
         });
 
-        this.server.on('postPlay', (id, StreamPath, args) => {
-            //console.log('\n[8 NodeEvent on postPlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
-        });
-
         this.server.on('donePlay', (id, StreamPath, args) => {
-            //console.log('\n[9 NodeEvent on donePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}\n`);
             if (!this.#validStreamUrl(StreamPath))
                 this.#rejectStream(id);
 
             let streamKey = StreamPath.split('/')[2];
-            const { streamData } = this.#getUser(streamKey);
-
-            if (!streamData?.isLive)
-                this.#rejectStream(id);
-
             this.#modifyViewerCount(streamKey, -1);
         });
     }
