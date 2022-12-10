@@ -5,13 +5,26 @@ const {
     follow,
     unfollow,
     topCategories,
+    isFollowing,
 } = require("../controller/stream.controller");
 
 const { verifyToken } = require('../middlewares/jwt.middleware');
-const { query } = require('express-validator');
+const { query, body, param } = require('express-validator');
 
 module.exports = function (app) {
-    app.get('/api/stream/view/:streamName', viewStreamer);
+    app.get('/api/stream/view/:streamName', 
+    [
+        param('streamName')
+            .not().isEmpty()
+            .withMessage('Stream name is required')
+            .escape()
+            .trim()
+            .isLength({ min: 3, max: 20 })
+            .withMessage('Stream name must be between 3 and 20 characters long')
+            .matches(/^[a-zA-Z0-9]+$/)
+            .withMessage('Invalid Streamer name')
+    ]
+    ,viewStreamer);
 
     app.get('/api/stream/top', 
         [
@@ -30,7 +43,45 @@ module.exports = function (app) {
 
     app.get('/api/stream/following', [verifyToken], following);
 
-    app.post("/api/stream/follow", [verifyToken], follow);
+    app.get('/api/stream/following/:streamName', [
+        verifyToken,
+        param('streamName')
+            .not().isEmpty()
+            .withMessage('Stream name is required')
+            .escape()
+            .trim()
+            .isLength({ min: 3, max: 20 })
+            .withMessage('Stream name must be between 3 and 20 characters long')
+            .matches(/^[a-zA-Z0-9]+$/)
+            .withMessage('Invalid Streamer name')
+    ], isFollowing);
 
-    app.post("/api/stream/unfollow", [verifyToken], unfollow);
+    app.post("/api/stream/follow", 
+        [
+            verifyToken,
+            body('streamName')
+                .not().isEmpty()
+                .withMessage('Stream name is required')
+                .escape()
+                .trim()
+                .isLength({ min: 3, max: 20 })
+                .withMessage('Stream name must be between 3 and 20 characters long')
+                .matches(/^[a-zA-Z0-9]+$/)
+                .withMessage('Invalid Streamer name')
+
+        ], follow);
+
+    app.post("/api/stream/unfollow", 
+        [
+            verifyToken,
+            body('streamName')
+                .not().isEmpty()
+                .withMessage('Stream name is required')
+                .escape()
+                .trim()
+                .isLength({ min: 3, max: 20 })
+                .withMessage('Stream name must be between 3 and 20 characters long')
+                .matches(/^[a-zA-Z0-9]+$/)
+                .withMessage('Invalid Streamer name')
+        ], unfollow);
 };

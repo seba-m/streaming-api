@@ -4,116 +4,129 @@ const Category = require("../models/Category.model")
 const { sanitizeText } = require("../Utils/Sanitize.util");
 
 exports.follow = function (req, res, next) {
-    let username = sanitizeText(req.body.username);
+    let username = req.body.username;
     let currentUser = req.userId;
 
-    User.findByIdAndUpdate(
+    User.findOneAndUpdate(
         { userName: username },
         {
             $inc: {
                 followers: 1,
             },
-        },
-        function (err, user) {
-            if (err) {
-                return res.status(404).json({ message: "Server error." });
-            }
+        }, 
+        { new: true }
+    ).then((user) => {
 
-            if (!user) {
-                return res.status(404).send("User not found");
-            }
+        if (!user) {
+            return res.status(404).send("User not found");
         }
-    )
-        .select("_id")
-        .exec((err, id) => {
-            User.findByIdAndUpdate(
-                { _id: currentUser },
-                {
-                    $push: {
-                        following: id,
-                    },
+
+        return User.findByIdAndUpdate(
+            { _id: currentUser },
+            {
+                $push: {
+                    following: user.userName,
                 },
-                function (err, user) {
-                    if (err) {
-                        return res.status(404).json({ message: "Server error." });
-                    }
+            }
+        );
 
-                    if (!user) {
-                        return res.status(404).send("User not found");
-                    }
+    }).then((user) => {
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
 
-                    return res.status(200).send("Followed");
-                }
-            );
-        });
+        return res.status(200).send("Followed");
+    })
+    .catch((err) => {
+        return res.status(500).json({ message: "Server error." });
+    });
 };
 
 exports.unfollow = function (req, res, next) {
-    let username = sanitizeText(req.body.username);
+    let username = req.body.username;
     let currentUser = req.userId;
 
-    User.findAndUpdate(
+    User.findOneAndUpdate(
         { userName: username },
         {
             $inc: {
                 followers: -1,
             },
         },
-        function (err, user) {
-            if (err) {
-                return res.status(404).json({ message: "Server error." });
-            }
-
+        { new: true }
+    )
+        .then((user) => {
             if (!user) {
                 return res.status(404).send("User not found");
             }
-        }
-    )
-        .select("_id")
-        .exec((err, id) => {
-            User.findByIdAndUpdate(
-                { _id: currentUser },
+
+            return User.findByIdAndUpdate(
+                currentUser,
                 {
                     $pull: {
-                        following: id,
+                        following: user.userName,
                     },
-                },
-                function (err, user) {
-                    if (err) {
-                        return res.status(404).json({ message: "Server error." });
-                    }
-
-                    if (!user) {
-                        return res.status(404).send("User not found");
-                    }
-
-                    return res.status(200).send("Unfollowed");
                 }
             );
-        }
-        );
+        })
+        .then((user) => {
+            if (!user) {
+                return res.status(404).send("User not found");
+            }
+
+            return res.status(200).send("Unfollowed");
+        })
+        .catch((err) => {
+            return res.status(500).send("Server error");
+        });
 };
 
 exports.following = function (req, res, next) {
-    //search over database for the user following
-
     let currentUser = req.userId;
 
-    User.findById({ _id: currentUser }, function (err, user) {
-        if (err) {
-            return res.status(404).json({ message: "Server error." });
-        }
+    User.findById(currentUser)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).send("User not found");
+            }
 
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
+            return User.find({ userName: { $in: user.following } }, "userName avatar banner");
+        })
+        .then((users) => {
+            if (!users) {
+                return res.status(404).send("User not found");
+            }
 
-        return res.status(200).send(JSON.stringify(user.following));
-    });
+            return res.status(200).json(users);
+        })
+        .catch((err) => {
+            return res.status(500).send("Server error");
+        });
+};
+
+exports.isFollowing = function (req, res, next) {
+    let currentUser = req.userId;
+    let username = req.body.username;
+
+    User.findById(currentUser)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).send("User not found");
+            }
+
+            return {
+                isFollowing: user.following.includes(username),
+                username: user.userName,
+                streamer: username
+            };
+        })
+        .catch((err) => {
+            return res.status(500).send("Server error");
+        });
 };
 
 exports.viewStreamer = function (req, res, next) {
-    let username = sanitizeText(req.params.streamName);
+    let username = req.params.streamName;
 
     User.findOne({ userName: username }, function (err, user) {
         if (err) {
@@ -139,19 +152,6 @@ exports.viewStreamer = function (req, res, next) {
         
         return res.status(200).send(JSON.stringify(streamer));
     });
-
-    /*res.send(JSON.stringify({
-          url: `${process.env.streamingUrl}/live/${req.params.streamName}.flv`,
-          username: 'test',
-          about: 'this is a test about description',
-          title: 'test stream xd',
-          tags: ['test1', 'vtuber', 'spain'],
-          time: "2022-10-04T19:55:53.790Z",
-          category: 'csgo',
-          followers: 0,
-          views: 0,
-          islive: false
-      }));*/
 };
 
 exports.topCategories = function (req, res, next) {
@@ -195,16 +195,18 @@ exports.topStreamers = function (req, res, next) {
             return res.status(404).send("Users not found");
         }
 
-        let streamers = [];
-
-        data.docs.forEach((user) => {
-            streamers.push({
-                username: user.userName,
-                avatar: user.avatar,
-                banner: user.banner,
-            });
-        });
-        
-        return res.status(200).send(JSON.stringify(streamers));
+        return res.status(200).send(JSON.stringify(
+            {
+                streams: data.docs.map((user) => {
+                    return {
+                        username: user.userName,
+                        avatar: user.avatar,
+                        banner: user.banner,
+                    }
+                }),
+                totalPages: data.totalPages,
+                currentPage: data.page,
+            }
+        ));
     });
 };
