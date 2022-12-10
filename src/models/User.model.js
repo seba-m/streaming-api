@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate");
+const mongoosePaginateAggregate = require("mongoose-aggregate-paginate-v2");
 const mongooseUniqueValidator = require("mongoose-unique-validator");
 
 const Schema = mongoose.Schema;
@@ -152,5 +153,6 @@ var userSchema = new Schema({
 });
 
 userSchema.plugin(mongoosePaginate);
+userSchema.plugin(mongoosePaginateAggregate);
 userSchema.plugin(mongooseUniqueValidator);
 module.exports = mongoose.model("User", userSchema);

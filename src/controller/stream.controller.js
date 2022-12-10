@@ -178,7 +178,15 @@ exports.topCategories = function (req, res, next) {
 };
 
 exports.topStreamers = function (req, res, next) {
-    User.aggregate([{ $sample: { size: 10 } }], function (err, data) {
+    let page = req.query.page || 1; //default page 1
+    let limit = req.query.limit || 10; //default result limit 10
+
+    var aggregate = User.aggregate();
+
+    User.aggregatePaginate(aggregate, { page: page, limit: limit, sort: { "streamData.isLive": -1 } }, function (
+        err,
+        data
+    ) {
         if (err) {
             return res.status(404).json({ message: "Server error." });
         }
@@ -189,14 +197,14 @@ exports.topStreamers = function (req, res, next) {
 
         let streamers = [];
 
-        data.forEach((user) => {
+        data.docs.forEach((user) => {
             streamers.push({
                 username: user.userName,
                 avatar: user.avatar,
                 banner: user.banner,
             });
         });
-
+        
         return res.status(200).send(JSON.stringify(streamers));
     });
 };

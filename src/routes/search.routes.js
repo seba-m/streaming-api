@@ -1,4 +1,7 @@
-const { searchStream, searchCategory } = require('../controller/search.controller');
+const { 
+    searchStream,
+     searchCategory 
+} = require('../controller/search.controller');
 
 const { query } = require('express-validator');
 
