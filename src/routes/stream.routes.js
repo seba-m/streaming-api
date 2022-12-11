@@ -59,7 +59,7 @@ module.exports = function (app) {
     app.post("/api/stream/follow", 
         [
             verifyToken,
-            body('streamName')
+            body('streamerName')
                 .not().isEmpty()
                 .withMessage('Stream name is required')
                 .escape()
@@ -74,7 +74,7 @@ module.exports = function (app) {
     app.post("/api/stream/unfollow", 
         [
             verifyToken,
-            body('streamName')
+            body('streamerName')
                 .not().isEmpty()
                 .withMessage('Stream name is required')
                 .escape()

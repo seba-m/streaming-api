@@ -16,7 +16,7 @@ require('./src/routes/auth.routes')(app);
 require('./src/routes/stream.routes')(app);
 require('./src/routes/search.routes')(app);
 require('./src/routes/image.routes')(app);
-
+/*
 app.get('/', (req, res, next) => {
   res.redirect(process.env.clientUrl);
 });
@@ -40,7 +40,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-/*
+*/
 var createError = require('http-errors');
 
 app.use(function (req, res, next) {
@@ -56,6 +56,6 @@ app.use(function (err, req, res, next) {
 
   res.status(err.status || 500);
   res.json(`error '${err.status || 500}' `);
-});*/
+});
 
 module.exports = app;
