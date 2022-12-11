@@ -41,7 +41,17 @@ module.exports = function (app) {
 
     app.get('/api/category/top', topCategories);
 
-    app.get('/api/stream/following', [verifyToken], following);
+    app.get('/api/stream/following', [
+        verifyToken,
+        query('page')
+            .escape()
+            .whitelist('[0-9]')
+            .toInt(),
+        query('limit')
+            .escape()
+            .whitelist('[0-9]')
+            .toInt()
+    ], following);
 
     app.get('/api/stream/following/:streamName', [
         verifyToken,

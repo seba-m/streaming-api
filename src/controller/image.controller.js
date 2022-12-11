@@ -144,7 +144,7 @@ exports.getBanner = function (req, res) {
             return res.status(404).json({ message: "User Not found." });
         }
         
-        if (!user.avatar){
+        if (!user.banner){
             return res.status(404).json({ message: "User don't have banner." });
         }
 

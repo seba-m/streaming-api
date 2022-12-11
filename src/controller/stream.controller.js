@@ -89,6 +89,8 @@ exports.unfollow = function (req, res, next) {
 
 exports.following = function (req, res, next) {
     let currentUser = req.userId;
+    let page = req.query.page || 1; //default page 1
+    let limit = req.query.limit || 10; //default result limit 10
 
     User.findById(currentUser, (err, user) => {
         if (err) {
@@ -99,21 +101,33 @@ exports.following = function (req, res, next) {
             return res.status(404).send("User not found");
         }
 
-        User.find(
+        User.paginate(
             { userName: { $in: user.following } },
-            "userName avatar banner",
-            (err, users) => {
+            {
+                page: page,
+                limit: limit,
+                //select: "userName avatar banner"
+            }, 
+            function (err, data) {
                 if (err) {
-                    return res.status(500).send("Server error");
+                    res.status(500).json({ message: "Server error." });
+                    return;
                 }
-
-                if (!users) {
-                    return res.status(404).send("User not found");
-                }
-
-                return res.status(200).json(users);
-            }
-        );
+        
+                res.send(JSON.stringify(
+                    {
+                        streams: data.docs.map((user) => {
+                            return {
+                                username: user.userName,
+                                avatar: user.avatar,
+                                banner: user.banner,
+                            }
+                        }),
+                        totalPages: data.totalPages,
+                        currentPage: data.page - 1,
+                    }
+                ));
+            });
     });
 };
 
