@@ -28,6 +28,22 @@ exports.stream = (req, res, next) => {
     });
 };
 
+exports.getColor = (req, res, next) => {
+    let username = req.params.username;
+
+    User.findOne({ userName: username }, function (err, user) {
+        if (err) {
+            return res.status(404).json({ message: "Server error." });
+        }
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        return res.status(200).send(user.streamData.color);
+    });
+}
+
 exports.updateProfile = (req, res, next) => {
     User.findById(req.userId, (err, user) => {
         if (err) {
@@ -53,7 +69,11 @@ exports.updateProfile = (req, res, next) => {
 }
 
 exports.updateContact = (req, res, next) => {
+    const password = req.body.password;
+    const newPassword = req.body.newPassword;
+
     User.findById(req.userId, (err, user) => {
+
         if (err) {
             return res.status(500).json({ message: "Server error." });
         }
@@ -63,21 +83,20 @@ exports.updateContact = (req, res, next) => {
 
         bcrypt.compare(password, user.password, (err, result) => {
             if (err) {
-                return res.status(500).json({ message: "Server error." });
+                return res.status(500).json({ message: "Server error on password." });
             }
 
             if (!result){
                 res.status(403).json({ message: "Invalid current password." });
             }
 
-            user.email = req.body.email;
-            user.password = bcrypt.hashSync(req.body.password, 8);
+            user.password = bcrypt.hashSync(newPassword, 8);
             user.updated_at = Date.now();
             user.save((err) => {
                 if (err) {
                     return res.status(500).json({ message: "Server error." });
                 }
-                res.status(200).json({ message: "User was updated successfully." });
+                return res.status(200).json({ message: "User was updated successfully." });
             });
         })
     });
@@ -144,19 +163,15 @@ exports.updateColor = (req, res, next) => {
             return res.status(404).json({ message: "User Not found." });
         }
 
-        const isValidColor = (v) => (/^#([0-9a-f]{3}){1,2}$/i).test(v);
-
-        if (!isValidColor(req.body.color)) {
-            return res.status(403).json({ message: "Invalid color format." });
-        }
-
-        user.color = req.body.color;
+        user.streamData.color = req.body.color;
 
         user.save((err) => {
             if (err) {
                 return res.status(500).json({ message: "Server error." });
             }
-            return res.status(200).json({ message: "User stream key was updated successfully.", key: key });
+
+
+            return res.status(200).json({ message: "User color was updated successfully." });
         });
     });
 }

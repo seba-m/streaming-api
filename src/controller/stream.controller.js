@@ -166,7 +166,7 @@ exports.viewStreamer = function (req, res, next) {
 
         let streamer = {
             url: `${process.env.streamingUrl}/app/${user.key}.flv`,
-            username: user.userName,
+            username: user.streamData.name,
             about: user.about,
             title: user.streamData.title,
             tags: user.streamData.tags,
@@ -175,6 +175,7 @@ exports.viewStreamer = function (req, res, next) {
             followers: user.followers,
             //following: user.following,
             islive: user.streamData.isLive,
+            color: user.streamData.color
         };
 
         return res.status(200).send(JSON.stringify(streamer));
@@ -229,6 +230,7 @@ exports.topStreamers = function (req, res, next) {
                         username: user.userName,
                         avatar: user.avatar,
                         banner: user.banner,
+                        color: user.streamData.color
                     }
                 }),
                 totalPages: data.totalPages,

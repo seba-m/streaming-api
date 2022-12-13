@@ -8,8 +8,7 @@ const { query } = require('express-validator');
 module.exports = function (app) {
     app.get('/api/search/stream', [
         query('query')
-            .trim()
-            .escape(),
+            .trim(),
         query('page')
             .trim()
             .escape()
@@ -30,8 +29,7 @@ module.exports = function (app) {
 
     app.get('/api/search/category', [
         query('query')
-            .trim()
-            .escape(),
+            .trim(),
         query('page')
             .trim()
             .escape()

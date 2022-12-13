@@ -31,7 +31,7 @@ const filefilter = function (req, file, callback) {
 
 var upload = multer({
     storage: storage,
-    limits: { fileSize: 3_145_728 }, // 3MB
+    limits: { fileSize: 10_485_760 }, // 3MB
     fileFilter: filefilter,
 });
 

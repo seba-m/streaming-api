@@ -1,5 +1,6 @@
 const User = require("../models/User.model");
 const Category = require("../models/Category.model")
+const sanitize = require('mongo-sanitize');
 
 const { textRegex, isEmpty } = require("../Utils/Sanitize.util");
 
@@ -13,15 +14,15 @@ exports.searchStream = function (req, res, next) {
         ));
     }
 
-    let textToSearch = textRegex(req.query.query);
-    let page = req.query.page || 1; //default page 1
-    let limit = req.query.limit || 10; //default result limit 10
-    let isTag = req.query.tag || false;
+    let textToSearch = textRegex(sanitize(req.query.query));
+    let page = sanitize(req.query.page) || 1; //default page 1
+    let limit = sanitize(req.query.limit) || 10; //default result limit 10
+    let isTag = sanitize(req.query.tag) || false;
 
     const query = 
         isTag ? 
-            { tags: textToSearch } : 
-            { username: textToSearch };
+            { "streamData.tags": textToSearch } : 
+            { userName: textToSearch };
 
     User.paginate(
         query,
@@ -66,10 +67,10 @@ exports.searchCategory = function (req, res, next) {
         ));
     }
 
-    let textToSearch = textRegex(req.query.query);
-    let page = req.query.page || 1; //default page 1
-    let limit = req.query.limit || 10; //default result limit 10
-    let isTag = req.query.tag || false;
+    let textToSearch = textRegex(sanitize(req.query.query));
+    let page = sanitize(req.query.page) || 1; //default page 1
+    let limit = sanitize(req.query.limit) || 10; //default result limit 10
+    let isTag = sanitize(req.query.tag) || false;
 
     const query =
         isTag ?
