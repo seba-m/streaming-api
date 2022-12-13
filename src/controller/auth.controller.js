@@ -60,7 +60,7 @@ exports.activateAccount = function (req, res) {
 			if (err) {
 				return res.status(500).json({ message: "Server error." });
 			}
-			let loginUrl = process.env.clientUrl + "/login";
+			let loginUrl = process.env.clientUrl + "/";
 			res.redirect(loginUrl);
 			/*
 			res.send(`
@@ -107,10 +107,7 @@ exports.signup = (req, res) => {
 exports.signin = (req, res) => {
 
 	User.findOne({
-		$or: [
-			{ userName: req.body.username },
-			{ email: req.body.username }
-		]
+		email: req.body.username 
 	})
 		.exec((err, user) => {
 			if (err) {
